@@ -224,3 +224,5 @@ module.exports = {
 ## License
 
 [MIT License](LICENSE)
+
+Placeholder logo from: https://www.flaticon.com/free-icon/diagram_3137927?term=data+structure&page=1&position=11&origin=tag&related_id=3137927
