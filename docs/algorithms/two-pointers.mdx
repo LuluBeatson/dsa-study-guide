@@ -1,0 +1,55 @@
+---
+sidebar_position: 1
+title: Two Pointers
+description: Understanding two pointers algorithm
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import CodeBlock from '@theme/CodeBlock';
+
+# Two Pointers
+
+The two pointers algorithm is used to solve problems that involve finding a specific element or a range of elements in an array.
+
+**Time Complexity:** $$O(n)$$
+
+**Space Complexity:** $$O(1)$$
+
+## Implementation
+
+<Tabs>
+  <TabItem value="py" label="Python">
+    ```python
+    def two_pointers(arr):
+        left, right = 0, len(arr) - 1
+        result = 0
+        while left < right:
+            # Process elements at left and right pointers
+            # Move pointers based on condition
+            if condition:
+                left += 1
+            else:
+                right -= 1
+        return result
+    ```
+  </TabItem>
+  <TabItem value="go" label="Golang">
+    ```go
+    func twoPointers(arr []int) int {
+        left, right := 0, len(arr)-1
+        result := 0
+        for left < right {  // Golang's "WHILE" is written as "FOR"
+            // Process elements at left and right pointers
+            // Move pointers based on condition
+            if condition {
+                left++
+            } else {
+                right--
+            }
+        }
+        return result
+    }
+    ```
+  </TabItem>
+</Tabs>

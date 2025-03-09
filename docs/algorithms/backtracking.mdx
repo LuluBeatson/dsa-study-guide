@@ -1,0 +1,82 @@
+---
+sidebar_position: 7
+title: Backtracking
+description: Understanding backtracking algorithm
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import CodeBlock from '@theme/CodeBlock';
+
+# Backtracking
+
+Backtracking is an algorithmic technique that considers searching every possible combination in order to solve a computational problem. It builds candidates to the solution incrementally and abandons candidates ("backtracks") when it determines that the candidate cannot lead to a valid solution.
+
+**Time Complexity:** Usually $$O(2^n)$$ or $$O(n!)$$ depending on the problem
+
+**Space Complexity:** $$O(n)$$ for recursion stack
+
+## Implementation
+
+Here's an example of generating all possible subsets of a set using backtracking:
+
+<Tabs>
+  <TabItem value="py" label="Python">
+    ```python
+    def subsets(nums):
+        result = []
+        
+        def backtrack(start, path):
+            # Add current subset to result
+            result.append(path[:])
+            
+            # Try all possible numbers that can be added
+            for i in range(start, len(nums)):
+                # Add current number to path
+                path.append(nums[i])
+                # Recursively generate subsets starting from next number
+                backtrack(i + 1, path)
+                # Remove current number (backtrack)
+                path.pop()
+        
+        backtrack(0, [])
+        return result
+
+    # Example usage:
+    # nums = [1, 2, 3]
+    # Output: [[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]]
+    ```
+  </TabItem>
+  <TabItem value="ts" label="Golang">
+    ```go
+    func subsets(nums []int) [][]int {
+        result := make([][]int, 0)
+        
+        var backtrack func(start int, path []int)
+        backtrack = func(start int, path []int) {
+            // Add current subset to result
+            pathCopy := make([]int, len(path))
+            copy(pathCopy, path)
+            result = append(result, pathCopy)
+            
+            // Try all possible numbers that can be added
+            for i := start; i < len(nums); i++ {
+                // Add current number to path
+                path = append(path, nums[i])
+                // Recursively generate subsets starting from next number
+                backtrack(i + 1, path)
+                // Remove current number (backtrack)
+                path = path[:len(path)-1]
+            }
+        }
+        
+        backtrack(0, []int{})
+        return result
+    }
+
+    // Example usage:
+    // nums := []int{1, 2, 3}
+    // Output: [[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]]
+    ```
+  </TabItem>
+</Tabs> 

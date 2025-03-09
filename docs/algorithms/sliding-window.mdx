@@ -1,0 +1,59 @@
+---
+sidebar_position: 2
+title: Sliding Window
+description: Understanding sliding window algorithm
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import CodeBlock from '@theme/CodeBlock';
+
+# Sliding Window
+
+The sliding window algorithm is used to solve problems that involve finding the maximum or minimum sum of a subarray of a given size. It is very similar to the two pointers algorithm.
+
+**Time Complexity:** O(n)
+
+**Space Complexity:** O(k), where k is the size of the window
+
+
+## Implementation
+
+<Tabs>
+  <TabItem value="py" label="Python">
+    ```python
+    def sliding_window(arr):
+        left = right = 0
+        window = {}
+        result = 0
+        while right < len(arr):
+            # Add element at right to window
+            # Process window
+            while condition:
+                # Remove element at left from window
+                left += 1
+            # Update result
+            right += 1
+        return result
+    ```
+  </TabItem>
+  <TabItem value="ts" label="Golang">
+    ```go
+    func slidingWindow(arr []int) int {
+        left, right := 0, 0
+        window := make(map[int]int)
+        result := 0
+        for right < len(arr) {
+            // Add element at right to window
+            // Process window
+            for condition {
+                // Remove element at left from window
+                left += 1
+            // Update result
+            right += 1
+        }
+        return result
+    }
+    ```
+  </TabItem>
+</Tabs>
