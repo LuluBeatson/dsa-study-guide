@@ -30,9 +30,9 @@ dsa-study-guide/
 │   └── components/ # Custom React components
 ├── static/ # Static assets (images, etc.)
 │   └── img/
-├── docusaurus.config.js # Docusaurus configuration
+├── docusaurus.config.ts # Docusaurus configuration
 ├── package.json
-├── sidebars.js # Optional: Manual sidebar configuration
+├── sidebars.ts # Optional: Manual sidebar configuration
 └── README.md
 ```
 
