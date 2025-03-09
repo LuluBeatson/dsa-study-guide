@@ -1,0 +1,76 @@
+---
+sidebar_position: 5
+title: Breadth-First Search
+description: Understanding breadth-first search algorithm
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import CodeBlock from '@theme/CodeBlock';
+
+# Breadth-First Search (BFS)
+
+The breadth-first search algorithm is used to traverse or search tree/graph data structures by exploring all nodes at the present depth before moving on to nodes at the next depth level.
+
+**Time Complexity:** $$O(n)$$
+
+**Space Complexity:** $$O(w)$$, where w is the maximum width of the tree
+
+## Implementation
+
+<Tabs>
+  <TabItem value="py" label="Python">
+    ```python
+    from collections import deque
+
+    class TreeNode:
+        def __init__(self, val=0, left=None, right=None):
+            self.val = val
+            self.left = left
+            self.right = right
+
+    def bfs(root):
+        if not root:
+            return
+        queue = deque([root])
+        while queue:
+            node = queue.popleft()
+            # Process current node
+            print(node.val)
+            # Add children to queue
+            if node.left:
+                queue.append(node.left)
+            if node.right:
+                queue.append(node.right)
+    ```
+  </TabItem>
+  <TabItem value="go" label="Golang">
+    ```go
+    type TreeNode struct {
+        Val int
+        Left *TreeNode
+        Right *TreeNode
+    }
+
+    func bfs(root *TreeNode) {
+        if root == nil {
+            return
+        }
+        queue := []*TreeNode{root}
+        for len(queue) > 0 {
+            // Process current node
+            node := queue[0]
+            queue = queue[1:]
+            fmt.Println(node.Val)
+            // Add children to queue
+            if node.Left != nil {
+                queue = append(queue, node.Left)
+            }
+            if node.Right != nil {
+                queue = append(queue, node.Right)
+            }
+        }
+    }
+    ```
+  </TabItem>
+</Tabs> 

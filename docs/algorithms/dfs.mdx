@@ -1,0 +1,60 @@
+---
+sidebar_position: 4
+title: Depth-First Search
+description: Understanding depth-first search algorithm
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import CodeBlock from '@theme/CodeBlock';
+
+# Depth-First Search (DFS)
+
+The depth-first search algorithm is used to traverse or search tree/graph data structures by exploring as far as possible along each branch before backtracking.
+
+**Time Complexity:** $$O(n)$$
+
+**Space Complexity:** $$O(h)$$, where h is the height of the tree
+
+## Implementation
+
+<Tabs>
+  <TabItem value="py" label="Python">
+    ```python
+    class TreeNode:
+        def __init__(self, val=0, left=None, right=None):
+            self.val = val
+            self.left = left
+            self.right = right
+
+    def dfs(node):
+        if not node:
+            return
+        # Process current node
+        print(node.val)  
+        # Recursively process left and right subtrees
+        dfs(node.left)
+        dfs(node.right)
+    ```
+  </TabItem>
+  <TabItem value="go" label="Golang">
+    ```go
+    type TreeNode struct {
+        Val int
+        Left *TreeNode
+        Right *TreeNode
+    }
+
+    func dfs(node *TreeNode) {
+        if node == nil {
+            return
+        }
+        // Process current node
+        fmt.Println(node.Val)
+        // Recursively process left and right subtrees
+        dfs(node.Left)
+        dfs(node.Right)
+    }
+    ```
+  </TabItem>
+</Tabs> 

@@ -1,0 +1,55 @@
+---
+sidebar_position: 3
+title: Binary Search
+description: Understanding binary search algorithm
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import CodeBlock from '@theme/CodeBlock';
+
+# Binary Search
+
+The binary search algorithm is used to find a target element in a sorted array by repeatedly dividing the search space in half.
+
+**Time Complexity:** $$O(\log n)$$
+
+**Space Complexity:** $$O(1)$$
+
+## Implementation
+
+<Tabs>
+  <TabItem value="py" label="Python">
+    ```python
+    def binary_search(arr, target):
+        left, right = 0, len(arr) - 1
+        while left <= right:
+            mid = left + (right - left) // 2
+            if arr[mid] == target:
+                return mid
+            elif arr[mid] < target:
+                left = mid + 1
+            else:
+                right = mid - 1
+        return -1
+    ```
+  </TabItem>
+  <TabItem value="ts" label="Golang">
+    ```go
+    func binarySearch(arr []int, target int) int {
+        left, right := 0, len(arr)-1
+        for left <= right {
+            mid := left + (right-left)/2
+            if arr[mid] == target {
+                return mid
+            } else if arr[mid] < target {
+                left = mid + 1
+            } else {
+                right = mid - 1
+            }
+        }
+        return -1
+    }
+    ```
+  </TabItem>
+</Tabs> 

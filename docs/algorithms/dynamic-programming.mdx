@@ -1,0 +1,90 @@
+---
+sidebar_position: 6
+title: Dynamic Programming
+description: Understanding dynamic programming algorithm
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import CodeBlock from '@theme/CodeBlock';
+
+# Dynamic Programming
+
+Dynamic Programming is a method for solving complex problems by breaking them down into simpler subproblems. It is applicable when subproblems share overlapping solutions.
+
+**Time Complexity:** Typically $$O(n)$$ to $$O(n^2)$$ depending on the problem
+
+**Space Complexity:** Typically $$O(n)$$ to $$O(n^2)$$ depending on the problem
+
+## Implementation
+
+Here's an example of solving the Fibonacci sequence using dynamic programming:
+
+<Tabs>
+  <TabItem value="py" label="Python">
+    ```python
+    def fibonacci_dp(n):
+        if n <= 1:
+            return n
+            
+        # Initialize dp array
+        dp = [0] * (n + 1)
+        dp[1] = 1
+        
+        # Fill dp array
+        for i in range(2, n + 1):
+            dp[i] = dp[i-1] + dp[i-2]
+            
+        return dp[n]
+
+    # Space-optimized version
+    def fibonacci_optimized(n):
+        if n <= 1:
+            return n
+            
+        prev2, prev1 = 0, 1
+        for i in range(2, n + 1):
+            curr = prev1 + prev2
+            prev2 = prev1
+            prev1 = curr
+            
+        return prev1
+    ```
+  </TabItem>
+  <TabItem value="ts" label="Golang">
+    ```go
+    func fibonacciDP(n int) int {
+        if n <= 1 {
+            return n
+        }
+        
+        // Initialize dp array
+        dp := make([]int, n+1)
+        dp[1] = 1
+        
+        // Fill dp array
+        for i := 2; i <= n; i++ {
+            dp[i] = dp[i-1] + dp[i-2]
+        }
+        
+        return dp[n]
+    }
+
+    // Space-optimized version
+    func fibonacciOptimized(n int) int {
+        if n <= 1 {
+            return n
+        }
+        
+        prev2, prev1 := 0, 1
+        for i := 2; i <= n; i++ {
+            curr := prev1 + prev2
+            prev2 = prev1
+            prev1 = curr
+        }
+        
+        return prev1
+    }
+    ```
+  </TabItem>
+</Tabs> 

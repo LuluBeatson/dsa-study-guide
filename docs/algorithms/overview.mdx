@@ -1,0 +1,45 @@
+---
+sidebar_position: 0
+title: Overview
+description: Summary of common algorithms and their complexities
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import CodeBlock from '@theme/CodeBlock';
+
+# Algorithms Overview
+
+This section covers common algorithmic patterns and techniques used in coding interviews. Below is a summary of each algorithm, its typical use cases, and complexity characteristics.
+
+| Algorithm | Description | Time Complexity | Space Complexity |
+|-----------|-------------|-----------------|------------------|
+| [Two Pointers](./two-pointers) | Used for searching pairs in sorted arrays or finding ranges that meet certain conditions. Often used when array is sorted or when searching from both ends. | $$O(n)$$ | $$O(1)$$ |
+| [Sliding Window](./sliding-window) | Used for tracking a subset of elements in arrays/strings as a window that slides through the data. Great for finding subarrays or substrings meeting certain conditions. | $$O(n)$$ | $$O(1)$$ or $$O(k)$$ |
+| [Binary Search](./binary-search) | Efficiently finds elements in sorted arrays by repeatedly dividing the search space in half. | $$O(\log n)$$ | $$O(1)$$ |
+| [Depth-First Search (DFS)](./dfs) | Explores paths to their deepest level before backtracking. Used for tree/graph traversal and path finding. | $$O(n)$$ | $$O(h)$$ |
+| [Breadth-First Search (BFS)](./bfs) | Explores all nodes at present depth before moving to next level. Great for finding shortest paths in unweighted graphs. | $$O(n)$$ | $$O(w)$$ |
+| [Dynamic Programming](./dynamic-programming) | Solves complex problems by breaking them into simpler subproblems. Used when subproblems overlap and have optimal substructure. | $$O(n)$$ to $$O(n^2)$$ | $$O(n)$$ to $$O(n^2)$$ |
+| [Backtracking](./backtracking) | Builds candidates to the solution incrementally and abandons candidates that cannot lead to a solution. Used for constraint satisfaction problems. | $$O(2^n)$$ or $$O(n!)$$ | $$O(n)$$ |
+
+Where:
+- $$n$$ = size of input (usually array length or number of nodes)
+- $$h$$ = height of tree (for tree algorithms)
+- $$w$$ = maximum width of tree/graph (for BFS)
+- $$k$$ = size of window or number of unique elements in window (for sliding window)
+
+## When to Use Each Algorithm
+
+- **Two Pointers**: When you need to find a pair of elements in a sorted array, or when you need to process array elements from both ends.
+  
+- **Sliding Window**: When you need to track a contiguous sequence of elements, especially when looking for subarrays that meet certain conditions.
+  
+- **Binary Search**: When searching in a sorted array or when the search space can be divided in half at each step.
+  
+- **DFS**: When you need to explore paths to their completion before trying alternatives, or when working with trees/graphs where memory is a concern.
+  
+- **BFS**: When you need to find shortest paths or when you need to explore nodes level by level in a graph/tree.
+  
+- **Dynamic Programming**: When a problem can be broken down into overlapping subproblems and has optimal substructure.
+  
+- **Backtracking**: When you need to find all (or some) solutions to a computational problem, particularly in constraint satisfaction scenarios. 
