@@ -137,39 +137,20 @@ npm run serve
 
 ## Deployment
 
-### GitHub Pages
+The site is automatically deployed to GitHub Pages using GitHub Actions. The deployment process is automated, so you don't need to run any manual deployment commands.
 
-1. Update `docusaurus.config.js`:
+### How it Works
 
-```javascript
-module.exports = {
-    url: "https://username.github.io",
-    baseUrl: "/repo-name/",
-    organizationName: "username",
-    projectName: "repo-name",
-    deploymentBranch: "gh-pages",
-};
-```
+1. When you push changes to the `main` branch, GitHub Actions automatically:
 
-2. Deploy using one of these methods:
+    - Sets up a fresh environment
+    - Installs dependencies
+    - Builds the site
+    - Deploys to the `gh-pages` branch
 
-Using SSH:
+2. GitHub Pages then serves the content from the `gh-pages` branch
 
-```bash
-USE_SSH=true npm run deploy
-```
-
-Not using SSH:
-
-```bash
-GIT_USER=<Your GitHub username> npm run deploy
-```
-
-### Vercel/Netlify
-
-1. Connect your GitHub repository to Vercel or Netlify
-2. They will automatically detect Docusaurus and configure the build
-3. Your site will deploy automatically when you push to main
+You can monitor deployment progress in your repository's "Actions" tab.
 
 ## Customization
 

@@ -4,6 +4,15 @@ on:
     push:
         branches:
             - main
+        paths:
+            - "docs/**"
+            - "src/**"
+            - "static/**"
+            - "docusaurus.config.ts"
+            - "package.json"
+            - "package-lock.json"
+            - "sidebars.ts"
+            # Excluding files like README.md, LICENSE, etc.
         # Review gh actions docs if you want to further define triggers, paths, etc
         # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#on
 
