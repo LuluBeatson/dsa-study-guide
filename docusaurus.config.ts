@@ -53,17 +53,6 @@ const config: Config = {
                     remarkPlugins: [remarkMath],
                     rehypePlugins: [rehypeKatex],
                 },
-                blog: {
-                    showReadingTime: true,
-                    // Remove the default edit URL
-                    editUrl: 'https://github.com/LuluBeatson/dsa-study-guide/tree/main',
-                    // Useful options to enforce blogging best practices
-                    onInlineTags: 'warn',
-                    onInlineAuthors: 'warn',
-                    onUntruncatedBlogPosts: 'warn',
-                    remarkPlugins: [remarkMath],
-                    rehypePlugins: [rehypeKatex],
-                },
                 theme: {
                     customCss: './src/css/custom.css',
                 },
