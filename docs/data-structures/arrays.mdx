@@ -6,6 +6,10 @@ description: Understanding array data structures and operations
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import CodeBlock from '@theme/CodeBlock';
+import PythonSource from '!!raw-loader!@site/examples/arrays.py';
+import TypeScriptSource from '!!raw-loader!@site/examples/arrays.ts';
+import GoSource from '!!raw-loader!@site/examples/arrays.go';
 
 # Arrays
 
@@ -15,13 +19,12 @@ Arrays are contiguous blocks of memory that store elements of the same type.
 
 <Tabs>
   <TabItem value="py" label="Python">
-    ```python reference
-    @site/examples/arrays.py
-    ```
+    <CodeBlock language="python">{PythonSource}</CodeBlock>
   </TabItem>
   <TabItem value="ts" label="TypeScript">
-    ```typescript reference
-    @site/examples/arrays.ts
-    ```
+    <CodeBlock language="typescript">{TypeScriptSource}</CodeBlock>
+  </TabItem>
+  <TabItem value="go" label="Golang">
+    <CodeBlock language="go">{GoSource}</CodeBlock>
   </TabItem>
 </Tabs> 
