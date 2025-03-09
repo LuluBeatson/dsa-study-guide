@@ -1,0 +1,149 @@
+---
+sidebar_position: 2
+title: Linked Lists
+description: Understanding linked list data structures and operations
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Linked Lists
+
+A linked list is a linear data structure where elements are stored in nodes, and each node points to the next node in the sequence. Each node contains two parts:
+1. Data ($$x_i$$)
+2. Reference to the next node ($$\text{next}_i \rightarrow x_{i+1}$$)
+
+## Implementation
+
+<Tabs>
+  <TabItem value="py" label="Python">
+    ```python
+    class ListNode:
+        def __init__(self, val=0, next=None):
+            self.val = val
+            self.next = next
+
+    class LinkedList:
+        def __init__(self):
+            self.head = None
+
+        def append(self, val):
+            if not self.head:
+                self.head = ListNode(val)
+                return
+            curr = self.head
+            while curr.next:
+                curr = curr.next
+            curr.next = ListNode(val)
+    ```
+  </TabItem>
+  <TabItem value="go" label="Golang">
+    ```go
+    type ListNode struct {
+        Val int
+        Next *ListNode
+    }
+
+    type LinkedList struct {
+        Head *ListNode
+    }
+
+    func (ll *LinkedList) Append(val int) {
+        newNode := &ListNode{Val: val}
+        if ll.Head == nil {
+            ll.Head = newNode
+            return
+        }
+        curr := ll.Head
+        for curr.Next != nil {
+            curr = curr.Next
+        }
+        curr.Next = newNode
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+## Operations and Time Complexity
+
+| Operation | Description | Time Complexity |
+|-----------|------------|-----------------|
+| Access | Accessing element at index $$i$$ | $$O(i)$$ |
+| Search | Finding element $$x$$ | $$O(n)$$ |
+| Insert Head | Insert at position $$i=0$$ | $$O(1)$$ |
+| Insert Tail | Insert at position $$i=n$$ | $$O(n)$$ |
+| Insert Middle | Insert at position $$i$$ | $$O(i)$$ |
+| Delete Head | Delete at position $$i=0$$ | $$O(1)$$ |
+| Delete Tail | Delete at position $$i=n$$ | $$O(n)$$ |
+| Delete Middle | Delete at position $$i$$ | $$O(i)$$ |
+
+## Space Complexity
+
+- $$O(n)$$ where $$n$$ is the number of nodes
+- Each node requires:
+  - Space for data: $$O(1)$$
+  - Space for next pointer: $$O(1)$$
+  - Total per node: $$O(1)$$
+  - Total for $$n$$ nodes: $$n \cdot O(1) = O(n)$$
+
+## Common Operations
+
+### Traversal
+```python
+def traverse(head):
+    current = head
+    while current:  # While current ≠ null
+        # Process current.val
+        current = current.next
+```
+
+### Insertion
+For inserting a node with value $$x$$ at position $$i$$:
+```python
+def insert(head, val, i):
+    if i == 0:
+        new_node = ListNode(val)
+        new_node.next = head
+        return new_node
+    
+    current = head
+    for _ in range(i-1):  # Move to position i-1
+        if not current:
+            return head
+        current = current.next
+    
+    if current:
+        new_node = ListNode(val)
+        new_node.next = current.next
+        current.next = new_node
+    return head
+```
+
+### Deletion
+For deleting a node at position $$i$$:
+```python
+def delete(head, i):
+    if i == 0:
+        return head.next if head else None
+    
+    current = head
+    for _ in range(i-1):  # Move to position i-1
+        if not current or not current.next:
+            return head
+        current = current.next
+    
+    if current and current.next:
+        current.next = current.next.next
+    return head
+```
+
+## Use Cases
+
+Linked lists are particularly useful when:
+- You need constant-time insertions/deletions at the beginning
+- You don't need random access to elements
+- Memory is a concern (dynamic size)
+- You want to implement other data structures like:
+  - Stacks (LIFO: $$x_n \rightarrow x_{n-1} \rightarrow \cdots \rightarrow x_1$$)
+  - Queues (FIFO: $$x_1 \rightarrow x_2 \rightarrow \cdots \rightarrow x_n$$)
+  - Hash tables (for handling collisions)

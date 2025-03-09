@@ -1,0 +1,143 @@
+---
+sidebar_position: 3
+title: Binary Trees
+description: Understanding binary tree data structures and operations
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Binary Trees
+
+A binary tree is a hierarchical data structure where each node has at most two children, referred to as the left child and right child. A Binary Search Tree (BST) is a special type of binary tree where the left subtree of a node contains only nodes with values less than the node's value, and the right subtree contains only nodes with values greater than the node's value.
+
+## Implementation
+
+<Tabs>
+  <TabItem value="py" label="Python">
+    ```python
+    class TreeNode:
+        def __init__(self, val=0, left=None, right=None):
+            self.val = val
+            self.left = left
+            self.right = right
+
+    class BinarySearchTree:
+        def __init__(self):
+            self.root = None
+
+        def insert(self, val):
+            if not self.root:
+                self.root = TreeNode(val)
+                return
+            curr = self.root
+            while curr:
+                if val < curr.val:
+                    if not curr.left:
+                        curr.left = TreeNode(val)
+                        return
+                    curr = curr.left
+                else:
+                    if not curr.right:
+                        curr.right = TreeNode(val)
+                        return
+                    curr = curr.right
+    ```
+  </TabItem>
+  <TabItem value="go" label="Golang">
+    ```go
+    type TreeNode struct {
+        Val int
+        Left *TreeNode
+        Right *TreeNode
+    }
+
+    type BinarySearchTree struct {
+        Root *TreeNode
+    }
+
+    func (bst *BinarySearchTree) Insert(val int) {
+        if bst.Root == nil {
+            bst.Root = &TreeNode{Val: val}
+            return
+        }
+        curr := bst.Root
+        for {
+            if val < curr.Val {
+                if curr.Left == nil {
+                    curr.Left = &TreeNode{Val: val}
+                    return
+                }
+                curr = curr.Left
+            } else {
+                if curr.Right == nil {
+                    curr.Right = &TreeNode{Val: val}
+                    return
+                }
+                curr = curr.Right
+            }
+        }
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+## Operations and Time Complexity
+
+| Operation | Description | Time Complexity (BST Average) | Time Complexity (BST Worst) |
+|-----------|------------|------------------------------|---------------------------|
+| Search | Finding a specific value | $$O(\log n)$$ | $$O(n)$$ |
+| Insertion | Adding a new node | $$O(\log n)$$ | $$O(n)$$ |
+| Deletion | Removing a node | $$O(\log n)$$ | $$O(n)$$ |
+| Access Min/Max | Finding minimum/maximum value | $$O(\log n)$$ | $$O(n)$$ |
+| Traversal (DFS) | Depth-first traversal (pre/in/post-order) | $$O(n)$$ | $$O(n)$$ |
+| Traversal (BFS) | Breadth-first traversal | $$O(n)$$ | $$O(n)$$ |
+| Height | Finding the height of the tree | $$O(n)$$ | $$O(n)$$ |
+
+## Space Complexity
+
+- $$O(n)$$ for storing n nodes
+- $$O(\text{h})$$ for recursive operations where h is the height of the tree
+  - Best/Average case (balanced tree): $$O(\log n)$$
+  - Worst case (skewed tree): $$O(n)$$
+
+## Common Traversal Methods
+
+### Depth-First Search (DFS)
+```python
+def dfs(node):
+    if not node:
+        return
+    # Process node (Pre-order)
+    dfs(node.left)
+    # Process node (In-order)
+    dfs(node.right)
+    # Process node (Post-order)
+```
+
+### Breadth-First Search (BFS)
+```python
+from collections import deque
+
+def bfs(root):
+    if not root:
+        return
+    queue = deque([root])
+    while queue:
+        node = queue.popleft()
+        # Process node
+        if node.left:
+            queue.append(node.left)
+        if node.right:
+            queue.append(node.right)
+```
+
+## Use Cases
+
+Binary trees, particularly BSTs, are useful for:
+- Implementing hierarchical data structures
+- Efficient searching and sorting
+- Priority queues (with heap implementation)
+- Expression parsing and evaluation
+- File system organization
+- Database indexing 
