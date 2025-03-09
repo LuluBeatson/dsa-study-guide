@@ -10,10 +10,10 @@ const config: Config = {
     favicon: 'img/logo_small.png',
 
     // Set the production url of your site here
-    url: 'https://lulubeatson.github.io',
+    url: 'https://dsa.lulubeatson.com',
     // Set the /<baseUrl>/ pathname under which your site is served
-    // For GitHub pages deployment, it is often '/<projectName>/'
-    baseUrl: '/dsa-study-guide/',
+    baseUrl: '/',
+    trailingSlash: false,
 
     // GitHub pages deployment config.
     // If you aren't using GitHub pages, you don't need these.
