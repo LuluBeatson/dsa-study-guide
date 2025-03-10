@@ -53,7 +53,7 @@ function useDocsGraph() {
             return;
         }
 
-        // Create nodes for each doc
+        // First pass: Create nodes
         defaultVersion.docs.forEach(doc => {
             // Skip category pages
             if (doc.id.startsWith('/category/')) {
@@ -61,9 +61,16 @@ function useDocsGraph() {
             }
 
             if (!nodeMap[doc.id]) {
+                // Make the name more readable by capitalizing and replacing hyphens
+                const name = doc.id.split('/').pop() || doc.id;
+                const readableName = name
+                    .split('-')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ');
+
                 nodes.push({
                     id: doc.id,
-                    name: doc.id.split('/').pop() || doc.id,
+                    name: readableName,
                     category: doc.id.split('/')[0],
                     url: doc.path,
                     val: 8,
@@ -72,17 +79,26 @@ function useDocsGraph() {
             }
         });
 
-        // Create links based on category relationships
-        nodes.forEach(node => {
-            nodes.forEach(otherNode => {
-                if (node.id !== otherNode.id && node.category === otherNode.category) {
-                    links.push({
-                        source: node.id,
-                        target: otherNode.id,
-                        value: 1,
-                    });
-                }
-            });
+        // Second pass: Create links based on document hierarchy
+        const docsByCategory = nodes.reduce((acc, node) => {
+            const category = node.category;
+            if (!acc[category]) {
+                acc[category] = [];
+            }
+            acc[category].push(node);
+            return acc;
+        }, {} as Record<string, GraphNode[]>);
+
+        // Create links between consecutive documents in the same category
+        Object.values(docsByCategory).forEach(categoryNodes => {
+            categoryNodes.sort((a, b) => a.id.localeCompare(b.id));
+            for (let i = 0; i < categoryNodes.length - 1; i++) {
+                links.push({
+                    source: categoryNodes[i].id,
+                    target: categoryNodes[i + 1].id,
+                    value: 1,
+                });
+            }
         });
 
         // Log the final processed data once
@@ -90,7 +106,8 @@ function useDocsGraph() {
             nodeCount: nodes.length,
             linkCount: links.length,
             sampleNode: nodes[0],
-            sampleLink: links[0]
+            sampleLink: links[0],
+            categories: Object.keys(docsByCategory)
         });
 
         setProcessedData({ nodes, links });
