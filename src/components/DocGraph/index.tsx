@@ -38,8 +38,10 @@ export default function DocGraph({ width = 800, height = 600 }: DocGraphProps): 
     const [highlightNodes, setHighlightNodes] = useState<Set<string>>(new Set<string>());
     const [highlightLinks, setHighlightLinks] = useState<Set<GraphLink>>(new Set<GraphLink>());
     const [hoverNode, setHoverNode] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
 
-    const graphRef = useRef<any>();
+    const graphRef = useRef<any>(null);
     const { colorMode } = useColorMode();
     const isDarkTheme = colorMode === 'dark';
     const { siteConfig } = useDocusaurusContext();
@@ -82,53 +84,173 @@ export default function DocGraph({ width = 800, height = 600 }: DocGraphProps): 
     }, [graphData]);
 
     useEffect(() => {
-        // Fetch or generate graph data
+        // Function to fetch or generate graph data
         const fetchGraphData = async () => {
-            try {
-                // For now, we'll use enhanced dummy data
-                // In a real implementation, you would parse your docs directory
-                // and build the graph based on actual content and links
-                const dummyData: GraphData = {
-                    nodes: [
-                        { id: 'arrays', name: 'Arrays', group: 'data-structures', url: `${baseUrl}docs/data-structures/arrays`, val: 10 },
-                        { id: 'linked-lists', name: 'Linked Lists', group: 'data-structures', url: `${baseUrl}docs/data-structures/linked-lists`, val: 8 },
-                        { id: 'stacks', name: 'Stacks', group: 'data-structures', url: `${baseUrl}docs/data-structures/stacks`, val: 6 },
-                        { id: 'queues', name: 'Queues', group: 'data-structures', url: `${baseUrl}docs/data-structures/queues`, val: 6 },
-                        { id: 'trees', name: 'Trees', group: 'data-structures', url: `${baseUrl}docs/data-structures/trees`, val: 9 },
-                        { id: 'graphs', name: 'Graphs', group: 'data-structures', url: `${baseUrl}docs/data-structures/graphs`, val: 9 },
-                        { id: 'hash-tables', name: 'Hash Tables', group: 'data-structures', url: `${baseUrl}docs/data-structures/hash-tables`, val: 8 },
-                        { id: 'heaps', name: 'Heaps', group: 'data-structures', url: `${baseUrl}docs/data-structures/heaps`, val: 7 },
+            setLoading(true);
+            setError(null);
 
-                        { id: 'sorting', name: 'Sorting', group: 'algorithms', url: `${baseUrl}docs/algorithms/sorting`, val: 10 },
-                        { id: 'searching', name: 'Searching', group: 'algorithms', url: `${baseUrl}docs/algorithms/searching`, val: 8 },
-                        { id: 'recursion', name: 'Recursion', group: 'algorithms', url: `${baseUrl}docs/algorithms/recursion`, val: 7 },
-                        { id: 'dynamic-programming', name: 'Dynamic Programming', group: 'algorithms', url: `${baseUrl}docs/algorithms/dynamic-programming`, val: 9 },
-                        { id: 'greedy', name: 'Greedy Algorithms', group: 'algorithms', url: `${baseUrl}docs/algorithms/greedy`, val: 7 },
-                        { id: 'backtracking', name: 'Backtracking', group: 'algorithms', url: `${baseUrl}docs/algorithms/backtracking`, val: 6 },
-                        { id: 'graph-algorithms', name: 'Graph Algorithms', group: 'algorithms', url: `${baseUrl}docs/algorithms/graph-algorithms`, val: 8 },
-                    ],
-                    links: [
-                        { source: 'arrays', target: 'sorting', value: 3 },
-                        { source: 'arrays', target: 'searching', value: 3 },
-                        { source: 'linked-lists', target: 'stacks', value: 2 },
-                        { source: 'linked-lists', target: 'queues', value: 2 },
-                        { source: 'stacks', target: 'recursion', value: 2 },
-                        { source: 'queues', target: 'graph-algorithms', value: 1 },
-                        { source: 'recursion', target: 'sorting', value: 2 },
-                        { source: 'recursion', target: 'backtracking', value: 3 },
-                        { source: 'recursion', target: 'dynamic-programming', value: 3 },
-                        { source: 'trees', target: 'recursion', value: 3 },
-                        { source: 'trees', target: 'heaps', value: 2 },
-                        { source: 'graphs', target: 'graph-algorithms', value: 3 },
-                        { source: 'graphs', target: 'trees', value: 2 },
-                        { source: 'hash-tables', target: 'searching', value: 3 },
-                        { source: 'dynamic-programming', target: 'greedy', value: 2 },
-                        { source: 'backtracking', target: 'greedy', value: 1 },
-                    ]
-                };
-                setGraphData(dummyData);
+            try {
+                // Since we can't directly access the file system or parse content in the browser,
+                // we'll create a graph based on the known structure of the docs
+
+                // Define the docs items in your project with a flattened structure
+                interface DocItem {
+                    id: string;
+                    label: string;
+                    group: string; // The category or group this document belongs to
+                    tags?: string[]; // Tags for additional grouping/filtering
+                    links?: string[]; // IDs of other docs this links to
+                }
+
+                // This should match your actual docs structure - now flattened
+                const docItems: DocItem[] = [
+                    // Data Structures
+                    {
+                        id: 'arrays',
+                        label: 'Arrays',
+                        group: 'data-structures',
+                        tags: ['basics', 'fundamental'],
+                        links: ['sorting', 'searching']
+                    },
+                    {
+                        id: 'linked-lists',
+                        label: 'Linked Lists',
+                        group: 'data-structures',
+                        tags: ['fundamental', 'pointers'],
+                        links: ['stacks', 'queues']
+                    },
+                    {
+                        id: 'stacks',
+                        label: 'Stacks',
+                        group: 'data-structures',
+                        tags: ['lifo'],
+                        links: ['recursion']
+                    },
+                    {
+                        id: 'queues',
+                        label: 'Queues',
+                        group: 'data-structures',
+                        tags: ['fifo'],
+                        links: ['graph-algorithms']
+                    },
+                    {
+                        id: 'trees',
+                        label: 'Trees',
+                        group: 'data-structures',
+                        tags: ['hierarchical', 'advanced'],
+                        links: ['recursion', 'heaps']
+                    },
+                    {
+                        id: 'graphs',
+                        label: 'Graphs',
+                        group: 'data-structures',
+                        tags: ['advanced', 'complex'],
+                        links: ['graph-algorithms', 'trees']
+                    },
+                    {
+                        id: 'hash-tables',
+                        label: 'Hash Tables',
+                        group: 'data-structures',
+                        tags: ['hashing', 'lookup'],
+                        links: ['searching']
+                    },
+                    {
+                        id: 'heaps',
+                        label: 'Heaps',
+                        group: 'data-structures',
+                        tags: ['priority', 'tree-based']
+                    },
+
+                    // Algorithms
+                    {
+                        id: 'sorting',
+                        label: 'Sorting',
+                        group: 'algorithms',
+                        tags: ['comparison', 'ordering']
+                    },
+                    {
+                        id: 'searching',
+                        label: 'Searching',
+                        group: 'algorithms',
+                        tags: ['lookup', 'retrieval']
+                    },
+                    {
+                        id: 'recursion',
+                        label: 'Recursion',
+                        group: 'algorithms',
+                        tags: ['technique', 'fundamental'],
+                        links: ['sorting', 'backtracking', 'dynamic-programming']
+                    },
+                    {
+                        id: 'dynamic-programming',
+                        label: 'Dynamic Programming',
+                        group: 'algorithms',
+                        tags: ['optimization', 'advanced'],
+                        links: ['greedy']
+                    },
+                    {
+                        id: 'greedy',
+                        label: 'Greedy Algorithms',
+                        group: 'algorithms',
+                        tags: ['optimization', 'local-optimal']
+                    },
+                    {
+                        id: 'backtracking',
+                        label: 'Backtracking',
+                        group: 'algorithms',
+                        tags: ['search', 'combination'],
+                        links: ['greedy']
+                    },
+                    {
+                        id: 'graph-algorithms',
+                        label: 'Graph Algorithms',
+                        group: 'algorithms',
+                        tags: ['pathfinding', 'traversal']
+                    },
+                ];
+
+                // Build nodes and links from the flattened structure
+                const nodes: GraphNode[] = [];
+                const links: GraphLink[] = [];
+                const nodeMap: Record<string, boolean> = {};
+
+                // Create nodes from doc items
+                docItems.forEach(item => {
+                    // Only add the node if it doesn't already exist
+                    if (!nodeMap[item.id]) {
+                        nodes.push({
+                            id: item.id,
+                            name: item.label,
+                            group: item.group,
+                            url: `${baseUrl}docs/${item.group}/${item.id}`,
+                            val: 8, // Equal size for all nodes as requested
+                        });
+                        nodeMap[item.id] = true;
+                    }
+
+                    // Add links if defined
+                    if (item.links) {
+                        item.links.forEach(targetId => {
+                            links.push({
+                                source: item.id,
+                                target: targetId,
+                                value: 2, // Equal weight for all links as requested
+                            });
+                        });
+                    }
+                });
+
+                if (nodes.length === 0) {
+                    throw new Error("No nodes were created. There may be an issue with the documentation structure.");
+                }
+
+                setGraphData({ nodes, links });
             } catch (error) {
-                console.error('Error fetching graph data:', error);
+                console.error('Error generating graph data:', error);
+                setError(error instanceof Error ? error.message : 'An unknown error occurred while generating the graph');
+                setGraphData({ nodes: [], links: [] });
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -158,7 +280,15 @@ export default function DocGraph({ width = 800, height = 600 }: DocGraphProps): 
 
     return (
         <div className="doc-graph-container">
-            {graphData.nodes.length > 0 ? (
+            {error ? (
+                <div className="graph-error">
+                    <h3>Error Loading Graph</h3>
+                    <p>{error}</p>
+                    <button onClick={() => window.location.reload()}>Try Again</button>
+                </div>
+            ) : loading ? (
+                <div className="graph-loading">Loading graph data...</div>
+            ) : graphData.nodes.length > 0 ? (
                 <>
                     <div className="graph-controls">
                         <button onClick={zoomIn} title="Zoom In">+</button>
@@ -252,7 +382,11 @@ export default function DocGraph({ width = 800, height = 600 }: DocGraphProps): 
                     />
                 </>
             ) : (
-                <div className="graph-loading">Loading graph data...</div>
+                <div className="graph-error">
+                    <h3>No Data Available</h3>
+                    <p>No graph data could be generated. This could be due to missing documentation or configuration issues.</p>
+                    <button onClick={() => window.location.reload()}>Try Again</button>
+                </div>
             )}
         </div>
     );
