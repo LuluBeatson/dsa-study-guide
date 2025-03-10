@@ -48,8 +48,11 @@ const config: Config = {
             {
                 docs: {
                     sidebarPath: './sidebars.ts',
-                    // Remove the default edit URL
-                    editUrl: 'https://github.com/LuluBeatson/dsa-study-guide/tree/main',
+                    // Conditional edit URL based on environment
+                    editUrl: ({ versionDocsDirPath, docPath }) =>
+                        process.env.NODE_ENV !== 'production'
+                            ? `cursor://file${process.cwd()}/${versionDocsDirPath}/${docPath}`
+                            : `https://github.com/LuluBeatson/dsa-study-guide/edit/main/${versionDocsDirPath}/${docPath}`,
                     remarkPlugins: [remarkMath],
                     rehypePlugins: [rehypeKatex],
                 },
