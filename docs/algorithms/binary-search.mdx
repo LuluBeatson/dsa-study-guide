@@ -10,13 +10,22 @@ import CodeBlock from '@theme/CodeBlock';
 
 # Binary Search
 
-The binary search algorithm is used to find a target element in a sorted array by repeatedly dividing the search space in half.
+The binary search algorithm is used to find a target element in a **sorted** array by repeatedly dividing the search space in half.
 
 **Time Complexity:** $$O(\log n)$$
 
 **Space Complexity:** $$O(1)$$
 
-## Implementation
+## Template
+
+- **Initialization**: Set `left` to 0 and `right` to the last index of the array.
+- **Loop Condition**: While `left` is less than or equal to `right`:
+  - Calculate `mid` as the index of the middle element.
+  - **Condition**:
+    - If the middle element equals the target, return the index `mid`.
+    - If the middle element is less than the target, update `left` to `mid + 1` (search in the right half).
+    - If the middle element is greater than the target, update `right` to `mid - 1` (search in the left half).
+- **Return**: If the target is not found, return -1.
 
 <Tabs>
   <TabItem value="py" label="Python">
@@ -25,13 +34,14 @@ The binary search algorithm is used to find a target element in a sorted array b
         left, right = 0, len(arr) - 1
         while left <= right:
             mid = left + (right - left) // 2
+            # Condition to check the middle element
             if arr[mid] == target:
-                return mid
+                return mid  # Target found
             elif arr[mid] < target:
-                left = mid + 1
+                left = mid + 1  # Search in the right half
             else:
-                right = mid - 1
-        return -1
+                right = mid - 1  # Search in the left half
+        return -1  # Target not found
     ```
   </TabItem>
   <TabItem value="ts" label="Golang">
@@ -52,4 +62,75 @@ The binary search algorithm is used to find a target element in a sorted array b
     }
     ```
   </TabItem>
-</Tabs> 
+</Tabs>
+
+## Example: Find Target Element in a **Rotated** Sorted Array
+
+[LeetCode 33](https://leetcode.com/problems/search-in-rotated-sorted-array/)
+
+To make this a bit more interesting, let's say the sorted array is **rotated**. Return the index of the target element if found, otherwise return -1.
+
+- `arr` is a sorted ascending array (distinct values). It has been rotated at some unknown pivot `k` (`0 <= k < n`) such that the array is transformed into `arr[k], arr[k+1], ..., arr[n-1], arr[0], arr[1], ..., arr[k-1]`.
+
+This solution has a time complexity of $$O(\log n)$$ because we are using binary search.
+
+<Tabs>
+  <TabItem value="py" label="Python">
+    ```python
+    def find_target_rotated(arr, target):
+        left, right = 0, len(arr) - 1
+        while left <= right:
+            mid = left + (right - left) // 2
+            if arr[mid] == target:
+                return mid
+            
+            # (1) Left half is sorted
+            if arr[left] <= arr[mid]:
+
+                # (1.1) Target is in the left half
+                if arr[left] <= target < arr[mid]:
+                    right = mid - 1
+
+                 # (1.2) Target is in the right half
+                else:
+                    left = mid + 1
+
+            # (2) Right half is sorted
+            else:
+
+                # (2.1) Target is in the right half 
+                if arr[mid] < target <= arr[right]:
+                    left = mid + 1
+
+                # (2.2) Target is in the left half
+                else:
+                    right = mid - 1
+
+        return -1  # Target not found
+    ```
+  </TabItem>
+</Tabs>
+
+
+**Case 1: Left half is sorted**
+```
+   |/     -- arr[mid]
+  /|      -- (1.1) Target is in the left half
+ / |
+/  |      -- arr[left]
+   |  /
+   | /    -- (1.2) Target is in the right half
+```
+
+**Case 2: Right half is sorted**
+```
+   |
+   |
+ / |      -- (2.2) Target is in the left half
+/  |      
+   |  /   -- arr[right]
+   | /    -- (2.1) Target is in the right half
+   |/     -- arr[mid]
+  /|     
+```
+
