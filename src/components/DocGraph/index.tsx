@@ -8,7 +8,7 @@ import './styles.css';
 interface GraphNode {
     id: string;
     name: string;
-    group: string;
+    category?: string; // Using category instead of group for classification
     url: string;
     val?: number; // Size of the node
     x?: number;
@@ -97,7 +97,8 @@ export default function DocGraph({ width = 800, height = 600 }: DocGraphProps): 
                 interface DocItem {
                     id: string;
                     label: string;
-                    group: string; // The category or group this document belongs to
+                    url: string; // Direct URL to the document
+                    category?: string; // Optional category for classification
                     tags?: string[]; // Tags for additional grouping/filtering
                     links?: string[]; // IDs of other docs this links to
                 }
@@ -108,56 +109,64 @@ export default function DocGraph({ width = 800, height = 600 }: DocGraphProps): 
                     {
                         id: 'arrays',
                         label: 'Arrays',
-                        group: 'data-structures',
+                        url: `${baseUrl}docs/data-structures/arrays`,
+                        category: 'data-structures',
                         tags: ['basics', 'fundamental'],
                         links: ['sorting', 'searching']
                     },
                     {
                         id: 'linked-lists',
                         label: 'Linked Lists',
-                        group: 'data-structures',
+                        url: `${baseUrl}docs/data-structures/linked-lists`,
+                        category: 'data-structures',
                         tags: ['fundamental', 'pointers'],
                         links: ['stacks', 'queues']
                     },
                     {
                         id: 'stacks',
                         label: 'Stacks',
-                        group: 'data-structures',
+                        url: `${baseUrl}docs/data-structures/stacks`,
+                        category: 'data-structures',
                         tags: ['lifo'],
                         links: ['recursion']
                     },
                     {
                         id: 'queues',
                         label: 'Queues',
-                        group: 'data-structures',
+                        url: `${baseUrl}docs/data-structures/queues`,
+                        category: 'data-structures',
                         tags: ['fifo'],
                         links: ['graph-algorithms']
                     },
                     {
                         id: 'trees',
                         label: 'Trees',
-                        group: 'data-structures',
+                        url: `${baseUrl}docs/data-structures/trees`,
+                        category: 'data-structures',
                         tags: ['hierarchical', 'advanced'],
                         links: ['recursion', 'heaps']
                     },
                     {
                         id: 'graphs',
                         label: 'Graphs',
-                        group: 'data-structures',
+                        url: `${baseUrl}docs/data-structures/graphs`,
+                        category: 'data-structures',
                         tags: ['advanced', 'complex'],
                         links: ['graph-algorithms', 'trees']
                     },
                     {
                         id: 'hash-tables',
                         label: 'Hash Tables',
-                        group: 'data-structures',
+                        url: `${baseUrl}docs/data-structures/hash-tables`,
+                        category: 'data-structures',
                         tags: ['hashing', 'lookup'],
                         links: ['searching']
                     },
                     {
                         id: 'heaps',
                         label: 'Heaps',
-                        group: 'data-structures',
+                        url: `${baseUrl}docs/data-structures/heaps`,
+                        category: 'data-structures',
                         tags: ['priority', 'tree-based']
                     },
 
@@ -165,46 +174,53 @@ export default function DocGraph({ width = 800, height = 600 }: DocGraphProps): 
                     {
                         id: 'sorting',
                         label: 'Sorting',
-                        group: 'algorithms',
+                        url: `${baseUrl}docs/algorithms/sorting`,
+                        category: 'algorithms',
                         tags: ['comparison', 'ordering']
                     },
                     {
                         id: 'searching',
                         label: 'Searching',
-                        group: 'algorithms',
+                        url: `${baseUrl}docs/algorithms/searching`,
+                        category: 'algorithms',
                         tags: ['lookup', 'retrieval']
                     },
                     {
                         id: 'recursion',
                         label: 'Recursion',
-                        group: 'algorithms',
+                        url: `${baseUrl}docs/algorithms/recursion`,
+                        category: 'algorithms',
                         tags: ['technique', 'fundamental'],
                         links: ['sorting', 'backtracking', 'dynamic-programming']
                     },
                     {
                         id: 'dynamic-programming',
                         label: 'Dynamic Programming',
-                        group: 'algorithms',
+                        url: `${baseUrl}docs/algorithms/dynamic-programming`,
+                        category: 'algorithms',
                         tags: ['optimization', 'advanced'],
                         links: ['greedy']
                     },
                     {
                         id: 'greedy',
                         label: 'Greedy Algorithms',
-                        group: 'algorithms',
+                        url: `${baseUrl}docs/algorithms/greedy`,
+                        category: 'algorithms',
                         tags: ['optimization', 'local-optimal']
                     },
                     {
                         id: 'backtracking',
                         label: 'Backtracking',
-                        group: 'algorithms',
+                        url: `${baseUrl}docs/algorithms/backtracking`,
+                        category: 'algorithms',
                         tags: ['search', 'combination'],
                         links: ['greedy']
                     },
                     {
                         id: 'graph-algorithms',
                         label: 'Graph Algorithms',
-                        group: 'algorithms',
+                        url: `${baseUrl}docs/algorithms/graph-algorithms`,
+                        category: 'algorithms',
                         tags: ['pathfinding', 'traversal']
                     },
                 ];
@@ -221,9 +237,9 @@ export default function DocGraph({ width = 800, height = 600 }: DocGraphProps): 
                         nodes.push({
                             id: item.id,
                             name: item.label,
-                            group: item.group,
-                            url: `${baseUrl}docs/${item.group}/${item.id}`,
-                            val: 8, // Equal size for all nodes as requested
+                            category: item.category,
+                            url: item.url,
+                            val: 8,
                         });
                         nodeMap[item.id] = true;
                     }
@@ -234,7 +250,7 @@ export default function DocGraph({ width = 800, height = 600 }: DocGraphProps): 
                             links.push({
                                 source: item.id,
                                 target: targetId,
-                                value: 2, // Equal weight for all links as requested
+                                value: 2,
                             });
                         });
                     }
@@ -311,13 +327,13 @@ export default function DocGraph({ width = 800, height = 600 }: DocGraphProps): 
                                 return '#ffcc00'; // Highlighted color
                             }
 
-                            const groupColors = {
+                            const categoryColors = {
                                 'data-structures': '#ff6b6b',
                                 'algorithms': '#4ecdc4',
                             };
 
                             // Return with reduced opacity if not highlighted and something is hovered
-                            const color = groupColors[node.group] || '#aaa';
+                            const color = categoryColors[node.category] || '#aaa';
                             if (hoverNode && !isHighlighted) {
                                 return isDarkTheme ? `${color}66` : `${color}66`; // 40% opacity
                             }
