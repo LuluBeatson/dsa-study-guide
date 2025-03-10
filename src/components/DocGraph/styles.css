@@ -1,0 +1,60 @@
+.doc-graph-container {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.graph-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+    font-size: 1.2rem;
+    color: var(--ifm-color-primary);
+}
+
+.doc-graph-container canvas {
+    cursor: pointer;
+}
+
+.graph-controls {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.graph-controls button {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--ifm-color-primary);
+    color: white;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+}
+
+.graph-controls button:hover {
+    transform: translateY(-2px);
+    background-color: var(--ifm-color-primary-darker);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.graph-controls button:active {
+    transform: translateY(0);
+}

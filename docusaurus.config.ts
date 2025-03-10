@@ -77,6 +77,11 @@ const config: Config = {
                     label: 'Guide',
                 },
                 {
+                    to: '/graph',
+                    position: 'left',
+                    label: 'Knowledge Graph',
+                },
+                {
                     href: 'https://github.com/LuluBeatson/dsa-study-guide',
                     label: 'GitHub',
                     position: 'right',
