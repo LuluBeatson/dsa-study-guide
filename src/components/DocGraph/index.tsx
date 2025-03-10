@@ -3,7 +3,7 @@ import ForceGraph2D from 'react-force-graph-2d';
 import { useColorMode } from '@docusaurus/theme-common';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import { useAllDocsData } from '@docusaurus/plugin-content-docs/client';
-import type { DocMetadata } from '@docusaurus/plugin-content-docs';
+import type { DocMetadata, PropVersionMetadata } from '@docusaurus/plugin-content-docs';
 import './styles.css';
 
 // Node type that matches the react-force-graph expected format
@@ -45,6 +45,7 @@ function useDocsGraph() {
         const nodes: GraphNode[] = [];
         const links: GraphLink[] = [];
         const nodeMap: Record<string, boolean> = {};
+        const pathToIdMap: Record<string, string> = {};
 
         // Process the default version's docs
         const defaultVersion = allDocsData.default?.versions[0];
@@ -53,7 +54,7 @@ function useDocsGraph() {
             return;
         }
 
-        // First pass: Create nodes
+        // First pass: Create nodes and build path-to-id mapping
         defaultVersion.docs.forEach(doc => {
             // Skip category pages
             if (doc.id.startsWith('/category/')) {
@@ -76,38 +77,69 @@ function useDocsGraph() {
                     val: 8,
                 });
                 nodeMap[doc.id] = true;
+                pathToIdMap[doc.path] = doc.id;
             }
         });
 
-        // Second pass: Create links based on document hierarchy
-        const docsByCategory = nodes.reduce((acc, node) => {
-            const category = node.category;
-            if (!acc[category]) {
-                acc[category] = [];
+        // Second pass: Analyze content and create links
+        defaultVersion.docs.forEach(doc => {
+            if (doc.id.startsWith('/category/')) {
+                return;
             }
-            acc[category].push(node);
-            return acc;
-        }, {} as Record<string, GraphNode[]>);
 
-        // Create links between consecutive documents in the same category
-        Object.values(docsByCategory).forEach(categoryNodes => {
-            categoryNodes.sort((a, b) => a.id.localeCompare(b.id));
-            for (let i = 0; i < categoryNodes.length - 1; i++) {
-                links.push({
-                    source: categoryNodes[i].id,
-                    target: categoryNodes[i + 1].id,
-                    value: 1,
-                });
+            // Get the document's content
+            const docData = doc as unknown as DocMetadata;
+            const content = docData.description || '';
+
+            // Find all markdown links in the content
+            // This regex matches both [text](link) and plain URLs
+            // The link might be relative or absolute
+            const linkRegex = /(?:\[(?:[^\]]+)\])?\(([^)]+)\)|https?:\/\/[^\s)]+/g;
+            let match;
+
+            while ((match = linkRegex.exec(content)) !== null) {
+                const url = match[1] || match[0];
+
+                // Clean up the URL - remove hash and query params
+                const cleanUrl = url.split('#')[0].split('?')[0];
+
+                // If this URL corresponds to one of our docs, create a link
+                if (pathToIdMap[cleanUrl] || cleanUrl.startsWith('/')) {
+                    const targetId = pathToIdMap[cleanUrl] || cleanUrl;
+                    links.push({
+                        source: doc.id,
+                        target: targetId,
+                        value: 1,
+                    });
+                }
+            }
+
+            // Also check for relative links that might be in the same directory
+            const baseDir = doc.id.split('/').slice(0, -1).join('/');
+            const relativeRegex = /\.\/([\w-]+)/g;
+
+            while ((match = relativeRegex.exec(content)) !== null) {
+                const relativePath = match[1];
+                const potentialId = `${baseDir}/${relativePath}`;
+
+                if (nodeMap[potentialId]) {
+                    links.push({
+                        source: doc.id,
+                        target: potentialId,
+                        value: 1,
+                    });
+                }
             }
         });
 
         // Log the final processed data once
+        const firstDoc = defaultVersion.docs[0] as unknown as DocMetadata;
         console.log('Processed Graph Data:', {
             nodeCount: nodes.length,
             linkCount: links.length,
+            contentSample: firstDoc?.description?.slice(0, 100),
             sampleNode: nodes[0],
             sampleLink: links[0],
-            categories: Object.keys(docsByCategory)
         });
 
         setProcessedData({ nodes, links });
