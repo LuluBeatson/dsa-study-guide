@@ -1,6 +1,6 @@
 ---
 sidebar_position: 2
-title: Sliding Window
+title: Sliding Window (Fixed)
 description: Understanding sliding window algorithm
 ---
 
@@ -8,52 +8,57 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import CodeBlock from '@theme/CodeBlock';
 
-# Sliding Window
+# Sliding Window (Fixed Size)
 
-The sliding window algorithm is used to solve problems that involve finding the maximum or minimum sum of a subarray of a given size. It is very similar to the two pointers algorithm.
+The sliding window algorithm is used to solve problems that involve finding the maximum or minimum sum of a subarray of a **fixed** size. It is very similar to the [Two Pointers](/docs/algorithms/two-pointers) algorithm.
 
-**Time Complexity:** O(n)
+**Time Complexity:** $$O(n)$$
 
-**Space Complexity:** O(k), where k is the size of the window
+**Space Complexity:** $$O(k)$$, where $$k$$ is the size of the window
 
-
-## Implementation
+## Template
 
 <Tabs>
   <TabItem value="py" label="Python">
     ```python
-    def sliding_window(arr):
-        left = right = 0
-        window = {}
-        result = 0
-        while right < len(arr):
-            # Add element at right to window
+    def sliding_window(arr: list, k: int) -> int:
+        window = None
+        result = None
+
+        for right in range(k, len(arr)):
             # Process window
-            while condition:
-                # Remove element at left from window
-                left += 1
+            window = ...
+
             # Update result
-            right += 1
+            result = ...
+
         return result
     ```
   </TabItem>
-  <TabItem value="ts" label="Golang">
-    ```go
-    func slidingWindow(arr []int) int {
-        left, right := 0, 0
-        window := make(map[int]int)
-        result := 0
-        for right < len(arr) {
-            // Add element at right to window
-            // Process window
-            for condition {
-                // Remove element at left from window
-                left += 1
-            // Update result
-            right += 1
-        }
+</Tabs>
+
+## Example: Maximum Sum of Subarray of Size K
+
+Here's an example of finding the maximum sum of a subarray of size `k` using the sliding window technique.
+
+- `window` is the sum of the current window
+- `result` is the maximum sum of the subarray
+
+<Tabs>
+  <TabItem value="py" label="Python">
+    ```python
+    def max_sum_subarray(arr: list, k: int) -> int:
+        window = sum(arr[:k])
+        result = window
+
+        for right in range(k, len(arr)):
+            # Process window
+            window += arr[right] - arr[right - k]
+
+            # Update result
+            result = max(result, window)
+
         return result
-    }
     ```
   </TabItem>
 </Tabs>

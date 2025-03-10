@@ -10,13 +10,16 @@ import CodeBlock from '@theme/CodeBlock';
 
 # Two Pointers
 
-The two pointers algorithm is used to solve problems that involve finding a specific element or a range of elements in an array.
+Two pointers algorithms are used to solve problems that involve sorted arrays, pairs, or sub-arrays/sub-strings efficiently to avoid the $$O(n^2)$$ complexity of nested loops.
+
 
 **Time Complexity:** $$O(n)$$
 
 **Space Complexity:** $$O(1)$$
 
-## Implementation
+The two pointers move independently. They can be from the same end or different ends of the array. [Sliding Window (Fixed)](/docs/algorithms/sliding-window) and [Sliding Window (Dynamic)](/docs/algorithms/sliding-window-dynamic) are variants of two pointers.
+
+## Template
 
 <Tabs>
   <TabItem value="py" label="Python">
@@ -53,3 +56,98 @@ The two pointers algorithm is used to solve problems that involve finding a spec
     ```
   </TabItem>
 </Tabs>
+
+## Example: Remove Duplicates from Sorted Array
+
+[LeetCode 26](https://leetcode.com/problems/remove-duplicates-from-sorted-array/)
+
+Given a sorted in non-decreasing array, remove duplicates in-place by reordering such that the first `k` elements contain unique elements in the order they were present in the original array. Return `k`.
+
+- `right` is the index being scanned ahead of `left`
+- `left` is the index of the last unique element
+- `result` is the number of unique elements in the array is `left + 1`
+- `condition` is `arr[left] == arr[right]`
+
+<Tabs>
+  <TabItem value="py" label="Python">
+    ```python
+    def remove_duplicates(arr):
+        left, right = 0, 1
+        while right < len(arr):
+            if arr[left] == arr[right]:
+                right += 1
+            else:
+                left += 1
+                arr[left] = arr[right]
+                right += 1
+
+        return left + 1
+    ```
+  </TabItem>
+</Tabs>
+
+**Visualization**
+
+```
+1 1 2 2 3 3 4 4 5 5  (L = 0, R = 1)
+L R
+
+1 1 2 2 3 3 4 4 5 5  (R++)
+L   R
+
+1 2 2 2 3 3 4 4 5 5  (L++, arr[L] <- arr[R])
+  L R
+  ^
+
+1 2 2 2 3 3 4 4 5 5  (R++)
+  L   R
+
+1 2 2 2 3 3 4 4 5 5  (R++)
+  L     R
+
+1 2 3 2 3 3 4 4 5 5  (L++, arr[L] <- arr[R])
+    L   R
+    ^
+
+...
+
+1 2 3 4 5 3 4 4 5 5  (K = L + 1 = 5)
+        L         R
+```
+
+
+## When to Use Two Pointers
+
+1. **Sorted Arrays**: 
+   - If the input array is sorted (or can be sorted), two pointers can efficiently find pairs or ranges of elements that meet certain conditions (e.g., finding two numbers that sum to a target).
+   - Example: In the "Two Sum II" problem, you can use two pointers starting from both ends of the sorted array.
+
+2. **Finding Pairs**:
+   - When the problem involves finding pairs of elements that satisfy a specific condition (e.g., sum, product), two pointers can help avoid the \(O(n^2)\) complexity of nested loops.
+   - Example: In the "Container With Most Water" problem, two pointers can be used to maximize the area between two lines.
+
+3. **Subarray Problems**:
+   - For problems that require finding a subarray that meets certain criteria (e.g., maximum sum, longest unique substring), two pointers can help maintain a sliding window.
+   - Example: In the "Longest Substring Without Repeating Characters" problem, you can use two pointers to track the start and end of the current substring.
+
+4. **Merging or Partitioning**:
+   - When merging two sorted arrays or partitioning an array based on a condition, two pointers can help traverse both arrays efficiently.
+   - Example: Merging two sorted lists into one sorted list.
+
+5. **Space Efficiency**:
+   - If the problem requires in-place modifications or has constraints on space usage, two pointers can help achieve the desired result without additional data structures.
+
+## When Not to Use Two Pointers
+
+1. **Unsorted Arrays**:
+   - If the array is unsorted and you need to find pairs or elements based on conditions that require knowledge of the entire array, two pointers may not be effective.
+
+2. **Complex Conditions**:
+   - If the condition for moving the pointers is complex and cannot be easily defined, a brute-force approach might be more straightforward.
+
+3. **Non-linear Structures**:
+   - For problems involving trees or graphs, other traversal methods (like depth-first or breadth-first search) may be more appropriate.
+
+## Conclusion
+
+In summary, the two pointers technique is particularly useful for problems involving sorted arrays, pairs, and subarrays where you can maintain a linear traversal. If you find yourself needing to check all pairs of indices, consider whether the problem can be simplified by sorting the array or using a sliding window approach with two pointers.

@@ -1,0 +1,125 @@
+---
+sidebar_position: 2.5
+title: Sliding Window (Dynamic)
+description: Understanding sliding window algorithm
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import CodeBlock from '@theme/CodeBlock';
+
+# Sliding Window (Dynamic Size)
+
+The sliding window algorithm is used to solve problems that involve finding the maximum or minimum sum of a subarray of a **dynamic** size. It is very similar to the [Two Pointers](/docs/algorithms/two-pointers) algorithm.
+
+**Time Complexity:** $$O(n)$$
+
+**Space Complexity:** $$O(1)$$
+
+## Template
+
+- `window` is some value computed from the current window
+- `result` is the result of the problem which may be updated from the current window
+- `condition` is the condition that determines whether the window should be shrunk from the left
+
+<Tabs>
+  <TabItem value="py" label="Python">
+    ```python
+    def sliding_window(arr: list) -> int:
+        left = 0
+        window = None
+        result = None
+
+        for right in range(len(arr)):
+            # Process window (add right element)
+            window = ...
+
+            while condition:
+                # Process window (remove left element)
+                window = ...
+
+                left += 1
+
+            # Update result
+            result = ...
+
+        return result
+    ```
+  </TabItem>
+</Tabs>
+
+
+## Example: Longest Substring Without Repeating Characters
+
+Here's an example of finding the longest substring without repeating characters using the sliding window technique.
+
+- `window` (dictionary) is the count of characters in the current window
+- `result` (string) is the longest substring without repeating characters
+- `condition` shrinks the window from the left if the current window now contains a repeating character due to the addition of a new character from the right
+
+<Tabs>
+  <TabItem value="py" label="Python">
+    ```python
+    def longest_substring_without_repeating_characters(s: str) -> str:
+        left = 0
+        window = {}  # Count of characters in the current window
+        result = ""  # Longest substring without repeating characters
+
+        for right in range(len(s)):
+            # Process window (add right character)
+            window[s[right]] = window.get(s[right], 0) + 1
+
+            while window[s[right]] > 1:
+                # Process window (remove left character)
+                window[s[left]] -= 1
+                left += 1
+
+            # Update result
+            if len(window) > len(result):
+                result = s[left:right+1]
+
+        return result
+    ```
+  </TabItem>
+</Tabs>
+
+You could also return the **length** of the longest substring by doing `result = right - left + 1` instead of `result = s[left:right+1]`.
+
+
+## Example: Longest Substring With Up To K Unique Characters
+
+Here's an example of finding the longest substring with up to `k` unique characters using the sliding window technique.
+
+- `window` (dictionary) is the count of characters in the current window
+- `result` (string) is the longest substring with up to `k` unique characters
+- `k` (integer) represents the maximum number of unique characters allowed in the current window. For this specific case, `k` should be set to 1 to ensure no repeating characters.
+- `condition` shrinks the window from the left if the current window now contains more than `k` unique characters
+
+<Tabs>
+  <TabItem value="py" label="Python">
+    ```python
+    def longest_substring_with_k_unique_characters(s: str, k: int = 1) -> int:  # Default k to 1
+        left = 0
+        window = {}  # Count of characters in the current window
+        result = ""  # Longest substring with up to k unique characters
+
+        for right in range(len(s)):
+            # Process window (add right character)
+            window[s[right]] = window.get(s[right], 0) + 1
+            
+            # Shrink window from the left if condition is met
+            while len(window) > k:  # Here, k is the max number of unique characters allowed in the current window
+                # Process window (remove left character)
+                window[s[left]] -= 1
+                if window[s[left]] == 0:
+                    del window[s[left]]
+                left += 1
+
+            # Update result
+            if len(window) > len(result):
+                result = s[left:right+1]
+
+        return result
+    ```
+  </TabItem>
+</Tabs>
