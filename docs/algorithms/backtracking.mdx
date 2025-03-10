@@ -16,67 +16,53 @@ Backtracking is an algorithmic technique that considers searching every possible
 
 **Space Complexity:** $$O(n)$$ for recursion stack
 
-## Implementation
-
-Here's an example of generating all possible subsets of a set using backtracking:
+## Template
 
 <Tabs>
   <TabItem value="py" label="Python">
     ```python
-    def subsets(nums):
-        result = []
-        
-        def backtrack(start, path):
-            # Add current subset to result
+    def backtrack(candidates: list, path: list, result: list):
+        if condition:
             result.append(path[:])
-            
-            # Try all possible numbers that can be added
-            for i in range(start, len(nums)):
-                # Add current number to path
-                path.append(nums[i])
-                # Recursively generate subsets starting from next number
-                backtrack(i + 1, path)
-                # Remove current number (backtrack)
-                path.pop()
-        
-        backtrack(0, [])
-        return result
-
-    # Example usage:
-    # nums = [1, 2, 3]
-    # Output: [[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]]
+            return
+        for candidate in candidates:
+            path.append(candidate)
+            backtrack(candidates, path, result)
+            path.pop()  # "backtrack" = remove the last appended element
     ```
   </TabItem>
-  <TabItem value="ts" label="Golang">
-    ```go
-    func subsets(nums []int) [][]int {
-        result := make([][]int, 0)
-        
-        var backtrack func(start int, path []int)
-        backtrack = func(start int, path []int) {
-            // Add current subset to result
-            pathCopy := make([]int, len(path))
-            copy(pathCopy, path)
-            result = append(result, pathCopy)
-            
-            // Try all possible numbers that can be added
-            for i := start; i < len(nums); i++ {
-                // Add current number to path
-                path = append(path, nums[i])
-                // Recursively generate subsets starting from next number
-                backtrack(i + 1, path)
-                // Remove current number (backtrack)
-                path = path[:len(path)-1]
-            }
-        }
-        
-        backtrack(0, []int{})
-        return result
-    }
+</Tabs>
 
-    // Example usage:
-    // nums := []int{1, 2, 3}
-    // Output: [[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]]
+## Example: Subsets
+
+Here's an example of generating all possible subsets of a set using backtracking.
+- `condition`: The stop condition in this case is when the length of the path is equal to the length of the candidates, indicating that a complete subset (the whole set) has been formed.
+- `candidates`: The set of elements to generate subsets from.
+- `path`: The current subset being built.
+- `result`: The list of all subsets.
+
+<Tabs>
+  <TabItem value="py" label="Python">
+    ```python
+    def backtrack(candidates: list, path: list, result: list):
+        if len(path) == len(candidates):
+            result.append(path[:])
+            return
+        for candidate in candidates:
+            path.append(candidate)
+            backtrack(candidates, path, result)
+            path.pop()  # "backtrack" = remove the last appended element
+
+
+    def subsets(candidates: list):
+        result = []  # To be mutated
+        backtrack(candidates, [], result)
+        return result
+
+
+    # Example usage
+    candidates = [1, 2, 3]
+    result = subsets(candidates)
     ```
   </TabItem>
-</Tabs> 
+</Tabs>
