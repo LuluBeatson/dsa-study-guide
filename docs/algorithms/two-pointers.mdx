@@ -10,14 +10,11 @@ import CodeBlock from '@theme/CodeBlock';
 
 # Two Pointers
 
-Two pointers algorithms are used to solve problems that involve sorted arrays, pairs, or sub-arrays/sub-strings efficiently to avoid the $$O(n^2)$$ complexity of nested loops.
-
+Two pointers algorithms efficiently solve problems involving sorted arrays, pairs, or sub-arrays/sub-strings by avoiding the $$O(n^2)$$ complexity of nested loops. The pointers can start from the same or opposite ends of the array, and this technique is useful for maintaining linear traversal. [Sliding Window (Fixed)](/docs/algorithms/sliding-window) and [Sliding Window (Dynamic)](/docs/algorithms/sliding-window-dynamic) are variants of two pointers.
 
 **Time Complexity:** $$O(n)$$
 
 **Space Complexity:** $$O(1)$$
-
-The two pointers move independently. They can be from the same end or different ends of the array. [Sliding Window (Fixed)](/docs/algorithms/sliding-window) and [Sliding Window (Dynamic)](/docs/algorithms/sliding-window-dynamic) are variants of two pointers.
 
 ## Template
 
@@ -57,11 +54,36 @@ The two pointers move independently. They can be from the same end or different 
   </TabItem>
 </Tabs>
 
-## Example: Remove Duplicates from Sorted Array
+## Examples
 
-[LeetCode 26](https://leetcode.com/problems/remove-duplicates-from-sorted-array/)
+### Two Sum II ([L167](https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/))
 
-Given a sorted in non-decreasing array, remove duplicates in-place by reordering such that the first `k` elements contain unique elements in the order they were present in the original array. Return `k`.
+Given a 1-indexed **non-decreasing** array of integers, find two numbers such that they add up to a specific target number. Return the indices of the two numbers as an array of length 2. 
+
+- `left` is the index of the first number
+- `right` is the index of the second number
+- `condition` is how `arr[left] + arr[right]` compares to `target`
+
+<Tabs>
+  <TabItem value="py" label="Python">
+    ```python
+    def two_sum(arr, target):
+        left, right = 0, len(arr) - 1
+        while left < right:
+            two_sum = arr[left] + arr[right]
+            if two_sum < target:
+                left += 1
+            elif two_sum > target:
+                right -= 1
+            else:
+                return [left + 1, right + 1]
+    ```
+  </TabItem>
+</Tabs>
+
+### Remove Duplicates from Sorted Array ([L26](https://leetcode.com/problems/remove-duplicates-from-sorted-array/))
+
+Given a sorted in **non-decreasing array**, remove duplicates in-place by reordering such that the first `k` elements contain unique elements in the order they were present in the original array. Return `k`.
 
 - `right` is the index being scanned ahead of `left`
 - `left` is the index of the last unique element
@@ -111,6 +133,7 @@ L   R
 
 ...
 
+
 1 2 3 4 5 3 4 4 5 5  (K = L + 1 = 5)
         L         R
 ```
@@ -147,7 +170,3 @@ L   R
 
 3. **Non-linear Structures**:
    - For problems involving trees or graphs, other traversal methods (like depth-first or breadth-first search) may be more appropriate.
-
-## Conclusion
-
-In summary, the two pointers technique is particularly useful for problems involving sorted arrays, pairs, and subarrays where you can maintain a linear traversal. If you find yourself needing to check all pairs of indices, consider whether the problem can be simplified by sorting the array or using a sliding window approach with two pointers.
