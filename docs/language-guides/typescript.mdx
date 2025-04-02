@@ -1,0 +1,312 @@
+---
+sidebar_position: 2
+title: TypeScript
+description: TypeScript quick reference guide
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# TypeScript
+
+See also [JavaScript](/docs/language-guides/javascript).
+
+## Getting Started
+
+Inside a [JavaScript](/docs/language-guides/javascript) project:
+
+### Package Management
+
+You often need to install type information as a separate dependency.
+Use `-D` or `--save-dev` to install it as a dev dependency because it's
+not needed at runtime.
+
+```bash
+pnpm add lodash
+pnpm add -D @types/lodash
+```
+
+### Run File
+
+#### `node` with manual compilation
+
+```bash
+# Install TypeScript as a dev dependency
+pnpm add -D typescript
+
+# Create a tsconfig.json file
+npx tsc --init
+
+# Manual compilation and run
+npx tsc myfile.ts && node myfile.js
+```
+
+#### `ts-node` (No manual compilation)
+
+```bash
+pnpm add -D ts-node
+
+# Run a TS file directly
+ts-node myfile.ts
+```
+
+## Type System
+
+### Basic Types
+Type annotations use a colon just like Python
+```typescript
+let name: string = "John";
+let age: number = 30;
+let isActive: boolean = true;
+let items: string[] = ["item1", "item2"];
+
+// Tuple type (fixed length, defined types)
+let tuple: [string, number] = ["id", 123];
+
+// Avoid `any` type when possible
+let anyType: any = "anything";
+```
+
+TypeScript can infer types - no need to always annotate
+```typescript
+let inferred = "John";  // TypeScript knows this is a string
+let numbers = [1, 2, 3];  // TypeScript knows this is number[]
+```
+
+### Enums
+```typescript
+// Similar to Python enums
+enum Role {
+  User = "USER",
+  Admin = "ADMIN",
+  Guest = "GUEST"
+}
+
+let userRole: Role = Role.Admin;
+```
+
+### Interfaces & Types
+```typescript
+// Interface - defines shape of an object
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  isAdmin?: boolean;  // Optional property
+  readonly createdAt: Date;  // Can't be modified after creation
+}
+
+// Use the interface
+const user: User = {
+  id: 1,
+  name: "John",
+  email: "john@example.com",
+  createdAt: new Date()
+};
+
+// Type aliases - alternative to interfaces
+type Point = {
+  x: number;
+  y: number;
+};
+
+// Union types (similar to Python's Union)
+type ID = string | number;
+let userId: ID = "abc123";
+userId = 456;  // Also valid
+```
+
+### Generics
+
+<Tabs>
+  <TabItem value="typescript" label="TypeScript">
+    ```typescript
+    // No need to import TypeVar
+
+    // The instance of T is created within the signature
+
+    function getFirst<T>(array: T[]): T | undefined {
+      return array[0];
+    }
+
+    const first = getFirst<string>(["a", "b", "c"]);  // Type: string
+    const firstNum = getFirst([1, 2, 3]);  // Type inferred: number
+    ```
+  </TabItem>
+  <TabItem value="python" label="Python">
+    ```python
+    from typing import TypeVar
+
+    T = TypeVar('T')  # Must create a TypeVar instance
+
+    def get_first(array: list[T]) -> T | None:
+        return array[0] if array else None
+
+
+    first = get_first(["a", "b", "c"])  # Type: string
+    firstNum = get_first([1, 2, 3])  # Type: int
+    ```
+  </TabItem>
+</Tabs>
+
+## Using Types
+
+### Functions
+
+```typescript
+// Parameter and return type annotations
+function greet(name: string): string {
+  return `Hello, ${name}!`;
+}
+
+// Arrow functions
+const multiply = (a: number, b: number): number => a * b;
+
+// Optional parameters with ?
+function logMessage(message: string, userId?: string): void {
+  // userId is optional
+  console.log(message, userId || 'anonymous');
+}
+
+// Default parameters
+function createUser(name: string, role: string = "user"): object {
+  return { name, role };
+}
+```
+
+### Classes
+
+<Tabs>
+  <TabItem value="typescript" label="TypeScript">
+    ```typescript
+    class Person {
+        // Class properties with access modifiers
+        private id: number;  // Can only be accessed within the class
+        public name: string;  // Can be accessed anywhere
+        protected age: number;  // Can be accessed within the class and subclasses
+        
+        // Constructor
+        constructor(id: number, name: string, age: number) {
+            this.id = id;
+            this.name = name;
+            this.age = age;
+        }
+        
+        // Methods
+        greet(): string {
+            return `Hello, I'm ${this.name}`;
+        }
+    }
+
+    // Inheritance
+    class Employee extends Person {
+        department: string;  // default public
+        
+        constructor(id: number, name: string, age: number, department: string) {
+            super(id, name, age);  // Call parent constructor
+            this.department = department;
+        }
+    }
+    ```
+  </TabItem>
+  <TabItem value="python" label="Python">
+    ```python
+    class Person:
+        # Python doesn't have access modifiers, but has "_" conventions
+        __id: int  # "private"
+        name: str  # "public"
+        _age: int  # "protected"
+    
+        # Constructor
+        def __init__(self, id: int, name: str, age: int):
+            self.__id = id
+            self.name = name
+            self._age = age
+    
+
+        # Methods
+        def greet(self):
+            return f"Hello, I'm {self.name}"
+
+
+
+    # Inheritance
+    class Employee(Person):
+        department: str  # "public"
+
+        def __init__(self, id: int, name: str, age: int, department: str):
+            super().__init__(id, name, age)  # Call parent constructor
+            self.department = department
+    
+
+    ```
+  </TabItem>
+</Tabs>
+
+## Web Application Specifics
+
+### DOM Manipulation
+```typescript
+// Type assertions when working with DOM
+const button = document.getElementById('submit') as HTMLButtonElement;
+// Or with angle bracket syntax (not used in JSX)
+const input = <HTMLInputElement>document.getElementById('username');
+
+// Event listeners with proper types
+button.addEventListener('click', (event: MouseEvent) => {
+  event.preventDefault();
+  console.log(input.value);
+});
+```
+
+### Async/Await
+```typescript
+// Promises and async/await (similar to Python)
+async function fetchUser(id: string): Promise<User> {
+  const response = await fetch(`/api/users/${id}`);
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  return await response.json() as User;
+}
+```
+
+### Error Handling
+```typescript
+try {
+  const user = await fetchUser("123");
+  console.log(user);
+} catch (error) {
+  // Type narrowing with instanceof
+  if (error instanceof Error) {
+    console.error(error.message);
+  } else {
+    console.error("Unknown error:", error);
+  }
+}
+```
+
+## TypeScript in React
+
+```typescript
+// Function component with props interface
+interface GreetingProps {
+  name: string;
+  count?: number;
+}
+
+function Greeting({ name, count = 0 }: GreetingProps) {
+  return <h1>Hello {name}, visited {count} times</h1>;
+}
+
+// Hooks with types
+const [users, setUsers] = useState<User[]>([]);
+```
+
+## TypeScript vs Python
+
+1. **Static Typing**: TypeScript checks types at compile time, not runtime
+2. **Block Scope**: Variables are scoped to blocks with `let` and `const`
+3. **Prototypal Inheritance**: Different OOP model than Python's class-based inheritance
+4. **Asynchronous Code**: Uses Promises/async-await (similar to Python but with different syntax)
+5. **Compilation**: TypeScript compiles to JavaScript

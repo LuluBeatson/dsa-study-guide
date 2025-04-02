@@ -1,0 +1,385 @@
+---
+sidebar_position: 1
+title: JavaScript
+description: JavaScript quick reference guide
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# JavaScript
+
+## Getting Started
+
+### Package Management
+
+```bash
+pnpm init -y
+# Creates a package.json file
+
+# Add a dependency
+pnpm add foo
+
+# Add a dev dependency
+pnpm add -D bar
+
+# Install all dependencies
+pnpm install
+```
+
+### Run File
+
+```bash
+node myfile.js
+```
+
+### Run Project
+
+First, add a start script to your `package.json` file.
+
+```json
+"scripts": {
+  "start": "node index.js"
+}
+```
+
+Then, run the project.
+
+```bash
+pnpm start
+```
+
+## Core Concepts
+
+### Declarations
+- `let` - mutable variable
+- `const` - immutable variable
+- `var` - old way to declare variables
+
+#### Scopes
+- `let` and `const` are block scoped. A block is defined by curly braces `{}`
+- `var` is function scoped
+
+### Functions
+- Functions are first-class citizens
+- Can be assigned to variables, passed as arguments, and returned from other functions
+- In function declarations and expressions, if `return` is omitted, the function will return `undefined`.
+- In arrow functions, `return` can be _implicitly_ returned if
+    - the body is a single expression
+    - AND the function is written without curly braces
+
+```javascript
+// Function declaration (explicit return)
+function greet(name) {
+  return `Hello, ${name}!`;
+}
+
+// Function expression (explicit return)
+const greet = function(name) {
+  return `Hello, ${name}!`;
+};
+
+// Arrow function (implicit return)
+const greet = (name) => `Hello, ${name}!`;
+
+// Arrow function (explicit return)
+const greet = (name) => { return `Hello, ${name}!` };
+```
+
+You can have parameters with default values with `=`.
+```javascript
+// Default parameter
+function greet(name = 'World') {
+  return `Hello, ${name}!`;
+}
+
+// Handling optional parameters manually
+function greet(name) {
+  // Check if name is undefined
+  return `Hello, ${name || 'World'}!`;
+}
+```
+
+## Collections
+
+### Arrays
+Arrays are ordered lists of values
+
+```javascript
+const numbers = [1, 2, 3];
+
+numbers[0] = 0; // Access/set by index
+
+numbers.push(4);  // Append to end
+numbers.pop();   // Remove from end
+numbers.shift(); // Remove from beginning
+numbers.unshift(0); // Prepend to beginning
+
+// Destructure array
+const [first, second, third] = numbers;
+
+// Swap
+[first, second] = [second, first];
+
+// Spread operator
+const newNumbers = [1, 2, ...numbers];
+```
+
+There are many ways to loop through arrays.
+```javascript
+// Loop
+for (const number of numbers) {
+  console.log(number);
+}
+// Loop with index
+for (let i = 0; i < numbers.length; i++) {
+  console.log(numbers[i]);
+}
+
+// forEach
+numbers.forEach(number => {
+  console.log(number);
+});
+// forEach with index
+numbers.forEach((number, index) => {
+  console.log(number, index);
+});
+```
+
+Operations on arrays
+```javascript
+// Map
+const doubled = numbers.map(number => number * 2);
+// [2, 4, 6]
+
+// Filter
+const evenNumbers = numbers.filter(number => number % 2 === 0);
+// [2, 4]
+
+// Reduce - accumulates
+const sum = numbers.reduce((acc, number) => acc + number, 0);
+// 6
+```
+
+### Sets
+- Sets are ordered collections of unique values
+
+```javascript
+const set = new Set();
+set.add('John');
+set.add('Jane');
+set.add('John');  // Duplicate, ignored
+
+set.has('John');  // true
+
+set.size;  // 2
+
+set.delete('Jane');
+set.clear();
+```
+
+Iterate over sets
+```javascript
+for (const value of set) {
+  console.log(value);
+}
+```
+
+### Objects
+- Objects are unordered collections of key-value pairs
+- Keys are strings or symbols, and values can be any type
+- Use dot notation or bracket notation to access properties
+
+```javascript
+const person = {
+  name: 'John',
+  age: 30,
+};
+
+// Access properties
+person.name;
+person['name'];
+
+// Delete properties
+delete person.age;
+```
+
+Loop through object properties
+```javascript
+// Keys
+for (const key in person) {
+  console.log(key, person[key]);
+}
+// Values
+for (const value of Object.values(person)) {
+  console.log(value);
+}
+// Keys and values
+for (const [key, value] of Object.entries(person)) {
+  console.log(key, value);
+}
+```
+
+### Maps
+- Maps are ordered collections of key-value pairs
+- Keys can be any type
+
+```javascript
+const map = new Map();
+map.set('name', 'John');
+map.set('age', 30);
+
+map.get('name');  // John
+map.has('name');  // true
+
+map.size;  // 2
+
+map.delete('age');
+map.clear();
+```
+
+## Asynchronous Code
+
+### Promises
+
+```javascript
+// Creating a promise
+const fetchData = new Promise((resolve, reject) => {
+  // Async operation
+  const success = true;
+  if (success) {
+    resolve('Data fetched successfully');
+  } else {
+    reject('Error fetching data');
+  }
+});
+
+// Using promises
+fetchData
+  .then(data => console.log(data))
+  .catch(error => console.error(error));
+```
+
+### Async/Await
+
+```javascript
+// Async function declaration
+async function fetchUser(id) {
+  try {
+    const response = await fetch(`/api/users/${id}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    throw error;
+  }
+}
+
+// Using async functions
+fetchUser(123)
+  .then(user => console.log(user))
+  .catch(error => console.error(error));
+```
+
+## Error Handling
+
+### Try/Catch
+
+```javascript
+try {
+    // Code that might throw an error
+} catch (error) {
+    // Code that runs if an error is thrown
+} finally {
+    // Code that runs after the try/catch block
+}
+```
+
+### Throw
+
+`throw` is equivalent to `raise` in Python.
+
+```javascript
+throw new Error('Something went wrong');
+```
+
+### Assert
+
+```javascript
+// Node.js
+const assert = require('assert');
+assert(condition, 'Message');
+
+// Or in testing frameworks like Jest
+import { expect } from '@jest/globals';
+expect(condition).toBeTruthy();
+```
+
+### Type Checking
+
+#### Checking class instances (supports inheritance)
+
+<Tabs>
+  <TabItem value="javascript" label="JavaScript">
+    ```javascript
+    class Animal {}
+    class Dog extends Animal {}
+
+    const d = new Dog();
+    console.log(d instanceof Dog);    // true
+    console.log(d instanceof Animal); // true
+    ```
+  </TabItem>
+  <TabItem value="python" label="Python">
+    ```python
+    class Animal: pass
+    class Dog(Animal): pass
+
+    d = Dog()
+    print(isinstance(d, Dog))    # True
+    print(isinstance(d, Animal)) # True
+    ```
+  </TabItem>
+</Tabs>
+
+#### Checking exact type (ignores inheritance)
+
+<Tabs>
+  <TabItem value="javascript" label="JavaScript">
+    ```javascript
+    console.log(Object.getPrototypeOf(d) === Dog.prototype);    // true
+    console.log(Object.getPrototypeOf(d) === Animal.prototype); // false
+    ```
+  </TabItem>
+  <TabItem value="python" label="Python">
+    ```python
+    print(type(d) is Dog)    # True
+    print(type(d) is Animal) # False
+    ```
+  </TabItem>
+</Tabs>
+
+#### Checking primitives
+
+<Tabs>
+  <TabItem value="javascript" label="JavaScript">
+    ```javascript
+    let x = 42;
+    console.log(typeof x === "number");  // true
+    ```
+  </TabItem>
+  <TabItem value="python" label="Python">
+    ```python
+    x = 42
+    print(isinstance(x, int))    # True
+    print(type(x) is int)        # True
+    ```
+  </TabItem>
+</Tabs>
+
+#### Key Differences
+
+1.	Python's isinstance is more flexible (works on both classes and built-in types), whereas TypeScript's instanceof only works for class instances.
+2.	TypeScript's typeof is only for primitives, whereas Python's type() works on any object.
+3.	Python supports multiple types in isinstance(obj, (type1, type2)), but TypeScript requires multiple typeof checks.
