@@ -316,9 +316,9 @@ import { expect } from '@jest/globals';
 expect(condition).toBeTruthy();
 ```
 
-### Type Checking
+## Type Checking
 
-#### Checking class instances (supports inheritance)
+### Checking class instances (supports inheritance)
 
 <Tabs>
   <TabItem value="javascript" label="JavaScript">
@@ -343,7 +343,7 @@ expect(condition).toBeTruthy();
   </TabItem>
 </Tabs>
 
-#### Checking exact type (ignores inheritance)
+### Checking exact type (ignores inheritance)
 
 <Tabs>
   <TabItem value="javascript" label="JavaScript">
@@ -360,7 +360,7 @@ expect(condition).toBeTruthy();
   </TabItem>
 </Tabs>
 
-#### Checking primitives
+### Checking primitives
 
 <Tabs>
   <TabItem value="javascript" label="JavaScript">
@@ -378,8 +378,61 @@ expect(condition).toBeTruthy();
   </TabItem>
 </Tabs>
 
-#### Key Differences
+### JavaScript vs Python Type Checking
 
 1.	Python's isinstance is more flexible (works on both classes and built-in types), whereas TypeScript's instanceof only works for class instances.
 2.	TypeScript's typeof is only for primitives, whereas Python's type() works on any object.
 3.	Python supports multiple types in isinstance(obj, (type1, type2)), but TypeScript requires multiple typeof checks.
+
+## Testing
+
+### Jest
+
+If you’re using Create React App (CRA), Jest and React Testing Library are already included. Otherwise, install the required dependencies:
+
+```bash
+npm install --save-dev jest @testing-library/react @testing-library/jest-dom @testing-library/user-event
+```
+
+#### Unit Testing
+
+```jsx
+// src/components/Button.test.jsx
+import { render, screen, fireEvent } from "@testing-library/react";
+import Button from "./Button";
+
+test("renders button with correct label", () => {
+  render(<Button label="Click Me" />);
+  expect(screen.getByText("Click Me")).toBeInTheDocument();
+});
+
+test("calls onClick handler when clicked", () => {
+  const handleClick = jest.fn();  // Mock function
+  render(<Button label="Click Me" onClick={handleClick} />);
+  
+  fireEvent.click(screen.getByText("Click Me"));
+  
+  expect(handleClick).toHaveBeenCalledTimes(1);
+});
+```
+
+```bash
+npm test
+```
+
+#### Integration Testing
+
+```jsx
+// src/components/Counter.test.jsx
+import { render, screen, fireEvent } from "@testing-library/react";
+import Counter from "./Counter";
+
+test("increments counter when button is clicked", () => {
+  render(<Counter />);
+  
+  const button = screen.getByText("Increment");
+  fireEvent.click(button);
+  
+  expect(screen.getByText("Count: 1")).toBeInTheDocument();
+});
+```
