@@ -1,0 +1,629 @@
+---
+sidebar_position: 3
+title: Go (Golang)
+description: Go quick reference guide
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Go (Golang)
+
+Go is a statically typed, compiled language designed for simplicity and efficiency.
+
+## Getting Started
+
+### Package Management
+
+Go uses modules for package management. Initialize a new module:
+
+```bash
+# Initialize a new module
+go mod init example.com/myproject
+
+# Add dependencies (automatically updates go.mod)
+go get github.com/gin-gonic/gin
+
+# Download dependencies
+go mod download
+
+# Remove unused dependencies
+go mod tidy
+```
+
+### Run File
+
+```bash
+# Run a Go file directly
+go run main.go
+
+# Compile and run
+go build main.go
+./main
+
+# Compile with custom output name
+go build -o myapp main.go
+./myapp
+
+# Run tests
+go test ./...
+```
+
+## Type System
+
+### Basic Types
+
+Go has explicit type declarations:
+
+```go
+var name string = "John"
+var age int = 30
+var isActive bool = true
+var items []string = []string{"item1", "item2"}
+
+// Short variable declaration (type inference)
+name := "John"  // Go infers type as string
+age := 30       // Go infers type as int
+
+// Multiple declarations
+var (
+    x int
+    y float64
+    z string
+)
+```
+
+### Constants and Enums
+
+```go
+// Constants
+const Pi = 3.14159
+const (
+    StatusActive  = "ACTIVE"
+    StatusInactive = "INACTIVE"
+)
+
+// Enum-like pattern using iota
+type Role int
+
+const (
+    User Role = iota  // 0
+    Admin             // 1
+    Guest             // 2
+)
+
+// String enum pattern
+type Status string
+
+const (
+    StatusPending Status = "PENDING"
+    StatusApproved Status = "APPROVED"
+    StatusRejected Status = "REJECTED"
+)
+```
+
+### Structs (Similar to Classes)
+
+<Tabs>
+  <TabItem value="go" label="Go">
+    ```go
+    // Define a struct (like a class in Python)
+    type User struct {
+        ID        int
+        Name      string
+        Email     string
+        IsAdmin   bool
+        createdAt time.Time  // lowercase = private (package-level)
+    }
+
+    // Create instances
+    user1 := User{
+        ID:      1,
+        Name:    "John",
+        Email:   "john@example.com",
+        IsAdmin: false,
+    }
+
+    // With positional arguments (discouraged)
+    user2 := User{1, "Jane", "jane@example.com", true, time.Now()}
+
+    // Methods on structs (receiver functions)
+    func (u User) Greet() string {
+        return fmt.Sprintf("Hello, I'm %s", u.Name)
+    }
+
+    // Pointer receiver (can modify the struct)
+    func (u *User) Promote() {
+        u.IsAdmin = true
+    }
+
+    // Usage
+    user1.Greet()     // "Hello, I'm John"
+    user1.Promote()   // Modifies user1
+    ```
+  </TabItem>
+  <TabItem value="python" label="Python">
+    ```python
+    from datetime import datetime
+
+    class User:
+        def __init__(self, id: int, name: str, email: str, is_admin: bool = False):
+            self.id = id
+            self.name = name
+            self.email = email
+            self.is_admin = is_admin
+            self._created_at = datetime.now()  # "private" by convention
+
+        def greet(self) -> str:
+            return f"Hello, I'm {self.name}"
+
+        def promote(self) -> None:
+            self.is_admin = True
+
+    # Usage
+    user1 = User(1, "John", "john@example.com", False)
+    user1.greet()     # "Hello, I'm John"
+    user1.promote()   # Modifies user1
+    ```
+  </TabItem>
+</Tabs>
+
+### Type Aliases
+
+```go
+// Type aliases for clarity
+type UserID int
+type Email string
+
+var id UserID = 123
+var email Email = "user@example.com"
+```
+
+## Interfaces
+
+Interfaces in Go are implemented implicitly (no `implements` keyword).
+
+<Tabs>
+  <TabItem value="go" label="Go">
+    ```go
+    // Define an interface
+    type Greeter interface {
+        Greet() string
+    }
+
+    // Any type with a Greet() method implements Greeter
+    type Person struct {
+        Name string
+    }
+
+    func (p Person) Greet() string {
+        return fmt.Sprintf("Hi, I'm %s", p.Name)
+    }
+
+    type Robot struct {
+        Model string
+    }
+
+    func (r Robot) Greet() string {
+        return fmt.Sprintf("Beep boop. Model: %s", r.Model)
+    }
+
+    // Both Person and Robot implement Greeter automatically
+    func SayHello(g Greeter) {
+        fmt.Println(g.Greet())
+    }
+
+    // Usage
+    person := Person{Name: "Alice"}
+    robot := Robot{Model: "T-800"}
+    
+    SayHello(person)  // Works!
+    SayHello(robot)   // Also works!
+
+    // Empty interface (like Python's Any)
+    var anything interface{}
+    anything = 42
+    anything = "string"
+    anything = person
+    ```
+  </TabItem>
+  <TabItem value="python" label="Python (ABC)">
+    ```python
+    from abc import ABC, abstractmethod
+
+    # Define an abstract class (like Go interface)
+    class Greeter(ABC):
+        @abstractmethod
+        def greet(self) -> str:
+            pass
+
+    # Must explicitly inherit from Greeter
+    class Person(Greeter):
+        def __init__(self, name: str):
+            self.name = name
+
+        def greet(self) -> str:
+            return f"Hi, I'm {self.name}"
+
+    class Robot(Greeter):
+        def __init__(self, model: str):
+            self.model = model
+
+        def greet(self) -> str:
+            return f"Beep boop. Model: {self.model}"
+
+    def say_hello(g: Greeter) -> None:
+        print(g.greet())
+
+    # Usage
+    person = Person("Alice")
+    robot = Robot("T-800")
+    
+    say_hello(person)
+    say_hello(robot)
+    ```
+  </TabItem>
+</Tabs>
+
+**Key Difference**: Go interfaces are satisfied implicitly. Python requires explicit inheritance from abstract classes.
+
+## Generics
+
+Go added generics in Go 1.18:
+
+<Tabs>
+  <TabItem value="go" label="Go">
+    ```go
+    // Generic function with type parameter T
+    func GetFirst[T any](slice []T) (T, bool) {
+        var zero T
+        if len(slice) == 0 {
+            return zero, false
+        }
+        return slice[0], true
+    }
+
+    // Usage
+    first, ok := GetFirst([]string{"a", "b", "c"})  // Type inferred
+    firstNum, ok := GetFirst[int]([]int{1, 2, 3})   // Explicit type
+
+    // Generic type
+    type Stack[T any] struct {
+        items []T
+    }
+
+    func (s *Stack[T]) Push(item T) {
+        s.items = append(s.items, item)
+    }
+
+    func (s *Stack[T]) Pop() (T, bool) {
+        var zero T
+        if len(s.items) == 0 {
+            return zero, false
+        }
+        item := s.items[len(s.items)-1]
+        s.items = s.items[:len(s.items)-1]
+        return item, true
+    }
+
+    // Usage
+    stack := Stack[int]{}
+    stack.Push(1)
+    stack.Push(2)
+    value, ok := stack.Pop()  // value = 2, ok = true
+    ```
+  </TabItem>
+  <TabItem value="python" label="Python">
+    ```python
+    from typing import TypeVar, Generic
+
+    T = TypeVar('T')
+
+    def get_first(slice: list[T]) -> tuple[T | None, bool]:
+        if not slice:
+            return None, False
+        return slice[0], True
+
+    # Usage
+    first, ok = get_first(["a", "b", "c"])
+    first_num, ok = get_first([1, 2, 3])
+
+    # Generic class
+    class Stack(Generic[T]):
+        def __init__(self):
+            self.items: list[T] = []
+
+        def push(self, item: T) -> None:
+            self.items.append(item)
+
+        def pop(self) -> tuple[T | None, bool]:
+            if not self.items:
+                return None, False
+            return self.items.pop(), True
+
+    # Usage
+    stack = Stack[int]()
+    stack.push(1)
+    stack.push(2)
+    value, ok = stack.pop()  # value = 2, ok = True
+    ```
+  </TabItem>
+</Tabs>
+
+## Functions
+
+### Basic Functions
+
+```go
+// Function with parameters and return type
+func greet(name string) string {
+    return fmt.Sprintf("Hello, %s!", name)
+}
+
+// Multiple return values (common pattern)
+func divide(a, b float64) (float64, error) {
+    if b == 0 {
+        return 0, fmt.Errorf("division by zero")
+    }
+    return a / b, nil
+}
+
+// Named return values
+func getCoordinates() (x, y int) {
+    x = 10
+    y = 20
+    return  // Returns x and y
+}
+
+// Variadic functions
+func sum(numbers ...int) int {
+    total := 0
+    for _, num := range numbers {
+        total += num
+    }
+    return total
+}
+
+result := sum(1, 2, 3, 4)  // 10
+```
+
+### Function Types and Closures
+
+```go
+// Function type
+type Operation func(int, int) int
+
+func applyOperation(a, b int, op Operation) int {
+    return op(a, b)
+}
+
+// Anonymous function
+add := func(x, y int) int {
+    return x + y
+}
+
+result := applyOperation(5, 3, add)  // 8
+
+// Closures
+func makeCounter() func() int {
+    count := 0
+    return func() int {
+        count++
+        return count
+    }
+}
+
+counter := makeCounter()
+fmt.Println(counter())  // 1
+fmt.Println(counter())  // 2
+```
+
+### Defer, Panic, and Recover
+
+```go
+// Defer - executes after function returns
+func readFile() {
+    file, err := os.Open("file.txt")
+    if err != nil {
+        return
+    }
+    defer file.Close()  // Guaranteed to run before return
+    
+    // Work with file...
+}
+
+// Panic and Recover (like exceptions)
+func riskyOperation() {
+    defer func() {
+        if r := recover(); r != nil {
+            fmt.Println("Recovered from:", r)
+        }
+    }()
+    
+    panic("something went wrong")
+}
+```
+
+## HTTP Server
+
+Go has a powerful built-in HTTP server in the standard library:
+
+```go
+package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "log"
+    "net/http"
+)
+
+// Data structures
+type User struct {
+    ID    int    `json:"id"`
+    Name  string `json:"name"`
+    Email string `json:"email"`
+}
+
+type Response struct {
+    Success bool        `json:"success"`
+    Data    interface{} `json:"data,omitempty"`
+    Error   string      `json:"error,omitempty"`
+}
+
+// Handler functions
+func homeHandler(w http.ResponseWriter, r *http.Request) {
+    fmt.Fprintf(w, "Welcome to the API!")
+}
+
+func getUserHandler(w http.ResponseWriter, r *http.Request) {
+    // Set content type
+    w.Header().Set("Content-Type", "application/json")
+    
+    // Mock user data
+    user := User{
+        ID:    1,
+        Name:  "John Doe",
+        Email: "john@example.com",
+    }
+    
+    response := Response{
+        Success: true,
+        Data:    user,
+    }
+    
+    json.NewEncoder(w).Encode(response)
+}
+
+func createUserHandler(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set("Content-Type", "application/json")
+    
+    // Only accept POST
+    if r.Method != http.MethodPost {
+        w.WriteHeader(http.StatusMethodNotAllowed)
+        json.NewEncoder(w).Encode(Response{
+            Success: false,
+            Error:   "Method not allowed",
+        })
+        return
+    }
+    
+    // Parse JSON body
+    var user User
+    if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+        w.WriteHeader(http.StatusBadRequest)
+        json.NewEncoder(w).Encode(Response{
+            Success: false,
+            Error:   "Invalid JSON",
+        })
+        return
+    }
+    
+    // Process user (mock)
+    user.ID = 123
+    
+    w.WriteHeader(http.StatusCreated)
+    json.NewEncoder(w).Encode(Response{
+        Success: true,
+        Data:    user,
+    })
+}
+
+// Middleware
+func loggingMiddleware(next http.HandlerFunc) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        log.Printf("%s %s", r.Method, r.URL.Path)
+        next(w, r)
+    }
+}
+
+func main() {
+    // Register routes
+    http.HandleFunc("/", loggingMiddleware(homeHandler))
+    http.HandleFunc("/api/user", loggingMiddleware(getUserHandler))
+    http.HandleFunc("/api/users", loggingMiddleware(createUserHandler))
+    
+    // Start server
+    port := ":8080"
+    log.Printf("Server starting on http://localhost%s", port)
+    if err := http.ListenAndServe(port, nil); err != nil {
+        log.Fatal(err)
+    }
+}
+```
+
+### Using a Router Library (Gin)
+
+For more complex applications, you can use a web framework like Gin:
+
+```go
+package main
+
+import (
+    "net/http"
+    "github.com/gin-gonic/gin"
+)
+
+type User struct {
+    ID    int    `json:"id"`
+    Name  string `json:"name"`
+    Email string `json:"email"`
+}
+
+func main() {
+    // Create Gin router
+    r := gin.Default()
+    
+    // Routes
+    r.GET("/", func(c *gin.Context) {
+        c.JSON(http.StatusOK, gin.H{
+            "message": "Welcome to the API!",
+        })
+    })
+    
+    r.GET("/api/user/:id", func(c *gin.Context) {
+        id := c.Param("id")
+        
+        // Mock user
+        user := User{ID: 1, Name: "John Doe", Email: "john@example.com"}
+        
+        c.JSON(http.StatusOK, gin.H{
+            "success": true,
+            "data":    user,
+        })
+    })
+    
+    r.POST("/api/users", func(c *gin.Context) {
+        var user User
+        
+        if err := c.BindJSON(&user); err != nil {
+            c.JSON(http.StatusBadRequest, gin.H{
+                "success": false,
+                "error":   "Invalid JSON",
+            })
+            return
+        }
+        
+        user.ID = 123
+        c.JSON(http.StatusCreated, gin.H{
+            "success": true,
+            "data":    user,
+        })
+    })
+    
+    // Start server
+    r.Run(":8080")
+}
+```
+
+## Go vs Python
+
+1. **Compiled Language**: Go compiles to native binaries, no interpreter needed
+2. **Static Typing**: Types are checked at compile time
+3. **Goroutines**: Lightweight concurrency with `go` keyword
+4. **No Classes**: Uses structs and interfaces instead of classes
+5. **Error Handling**: Returns errors as values, no exceptions (except panic/recover)
+6. **Multiple Return Values**: Common pattern for returning results and errors
+7. **Implicit Interface Implementation**: No need to declare that a type implements an interface
+8. **Pointers**: Explicit pointer types (`*Type`) for reference semantics
+9. **Package-Level Visibility**: Uppercase = exported (public), lowercase = unexported (private)
