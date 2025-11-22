@@ -1,0 +1,798 @@
+---
+sidebar_position: 3
+title: Golang
+description: Go quick reference guide
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Golang
+
+Go is a statically typed, compiled language designed for simplicity and efficiency.
+
+## Getting Started
+
+### Package Management
+
+Go uses modules for package management. Initialize a new module:
+
+```bash
+# Initialize a new module
+go mod init example.com/myproject
+
+# Add dependencies (automatically updates go.mod)
+go get github.com/gin-gonic/gin
+
+# Download dependencies
+go mod download
+
+# Remove unused dependencies
+go mod tidy
+```
+
+### Run File
+
+```bash
+# Run a Go file directly
+go run main.go
+
+# Compile and run
+go build main.go
+./main
+
+# Compile with custom output name
+go build -o myapp main.go
+./myapp
+
+# Run tests
+go test ./...
+```
+
+## Type System
+
+### Basic Types
+
+Go has explicit type declarations:
+
+```go
+var age int = 30
+var price float64 = 19.99
+var bigInt int64 = 9223372036854775807
+
+var name string = "John"
+var isActive bool = true
+
+var items []string = []string{"item1", "item2"}
+
+// Short variable declaration (type inference)
+name := "John"  // Go infers type as string
+age := 30       // Go infers type as int
+
+// Multiple declarations
+var (
+    x int
+    y float64
+    z string
+)
+
+// Any type
+var anything any = "anything"
+anything = 42
+anything = person
+
+// Function type
+type Operation func(int, int) int
+```
+
+### Type Aliases
+
+```go
+// Type aliases for clarity
+type UserID int
+type Email string
+
+var id UserID = 123
+var email Email = "user@example.com"
+```
+
+### Constants
+
+Constants are declared using the `const` keyword. They are immutable and must be assigned a value at declaration time.
+
+```go
+// Constants
+const Pi = 3.14159
+const (
+    StatusActive  = "ACTIVE"
+    StatusInactive = "INACTIVE"
+)
+```
+
+### Enums
+
+Go doesn't have built-in enums, but you can create enum-like types using constants. There are two common patterns:
+
+**Integer Enums with `iota`**: The `iota` keyword automatically increments for each constant in a block, starting from 0. This is useful for sequential integer values.
+
+```go
+// Enum-like pattern using iota
+type Role int
+
+const (
+    User Role = iota  // 0
+    Admin             // 1
+    Guest             // 2
+)
+
+// Usage
+fmt.Println(User)  // 0
+fmt.Println(Admin == 1)  // true
+fmt.Println(Guest == Admin)  // false
+```
+
+**String Enums**: Explicitly assign string values to constants. This is useful when you need readable string values or when working with JSON/APIs.
+
+```go
+// String enum pattern
+type Status string
+
+const (
+    StatusPending Status = "PENDING"
+    StatusApproved Status = "APPROVED"
+    StatusRejected Status = "REJECTED"
+)
+
+// Usage
+fmt.Println(StatusPending)  // "PENDING"
+fmt.Println(StatusApproved == "APPROVED")  // true
+fmt.Println(StatusRejected == StatusPending)  // false
+```
+
+### Structs
+
+<Tabs>
+  <TabItem value="go" label="Go">
+    ```go
+    // Define a struct (like a class in Python)
+    type User struct {
+        ID        int
+        Name      string
+        Email     string
+        IsAdmin   bool
+    }
+
+    // Methods on structs (receiver functions)
+    func (u User) Greet() string {
+        return fmt.Sprintf("Hello, I'm %s", u.Name)
+    }
+
+    // Pointer receiver (can modify the struct)
+    func (u *User) Promote() {
+        u.IsAdmin = true
+    }
+
+    // Usage
+    user1 := User{
+        ID:      1,
+        Name:    "John",
+        Email:   "john@example.com",
+        IsAdmin: false,
+    }
+    user1.Greet()     // "Hello, I'm John"
+    user1.Promote()   // Modifies user1
+    fmt.Println(user1.IsAdmin)  // true
+    ```
+  </TabItem>
+  <TabItem value="python" label="Python">
+    ```python
+    class User:
+        def __init__(self, id: int, name: str, email: str, is_admin: bool = False):
+            self.id = id
+            self.name = name
+            self.email = email
+            self.is_admin = is_admin
+
+
+
+        def greet(self) -> str:
+            return f"Hello, I'm {self.name}"
+
+
+
+        def promote(self) -> None:
+            self.is_admin = True
+
+
+    # Usage
+    user1 = User(
+        id=1,
+        name="John",
+        email="john@example.com",
+        is_admin=False
+    )
+    user1.greet()     # "Hello, I'm John"
+    user1.promote()   # Modifies user1
+    print(user1.is_admin)  # True
+    ```
+  </TabItem>
+</Tabs>
+
+## Interfaces
+
+In Python, you typically combine data and behavior in one class. However, in Go, you can separate them:
+- **Structs**: Data
+- **Interfaces**: Behavior contract
+
+
+<Tabs>
+  <TabItem value="go" label="Go">
+    ```go
+
+    // Define an interface
+    // Any type that implements the Greet() method will be a Greeter
+    type Greeter interface {
+        Greet() string
+    }
+
+
+    // Person implements Greeter implicitly
+    type Person struct {
+        Name string
+    }
+
+    func (p Person) Greet() string {
+        return fmt.Sprintf("Hi, I'm %s", p.Name)
+    }
+
+    // Robot implements Greeter implicitly
+    type Robot struct {
+        Model string
+    }
+
+    func (r Robot) Greet() string {
+        return fmt.Sprintf("Beep boop. Model: %s", r.Model)
+    }
+
+    // A function that uses the Greeter interface
+    func SayHello(g Greeter) {
+        fmt.Println(g.Greet())
+    }
+
+    // Usage
+    person := Person{Name: "Alice"}
+    robot := Robot{Model: "T-800"}
+    
+    SayHello(person)  // Works!
+    SayHello(robot)   // Also works!
+    ```
+  </TabItem>
+  <TabItem value="python" label="Python (ABC)">
+    ```python
+    from abc import ABC, abstractmethod
+
+    # Define an abstract class
+    class Greeter(ABC):
+        @abstractmethod
+        def greet(self) -> str:
+            pass
+
+    # Person implements Greeter explicitly (inheritance)
+    class Person(Greeter):
+        def __init__(self, name: str):
+            self.name = name
+
+        def greet(self) -> str:
+            return f"Hi, I'm {self.name}"
+
+
+    # Robot implements Greeter explicitly (inheritance)
+    class Robot(Greeter):
+        def __init__(self, model: str):
+            self.model = model
+
+        def greet(self) -> str:
+            return f"Beep boop. Model: {self.model}"
+
+
+    # A function that uses the Greeter interface
+    def say_hello(g: Greeter) -> None:
+        print(g.greet())
+
+
+    # Usage
+    person = Person("Alice")
+    robot = Robot("T-800")
+    
+    say_hello(person)
+    say_hello(robot)
+    ```
+  </TabItem>
+</Tabs>
+
+**Why Use Interfaces?**
+- **Polymorphism**: Ability to use different types in the same way
+- **Dependency Injection**: Passing interfaces instead of concrete types
+- **Testing**: Mocking interfaces for unit tests
+
+## Generics
+
+Go added generics in Go 1.18.
+Generics let you write type-safe, reusable code once that works with multiple types.
+
+<Tabs>
+  <TabItem value="go" label="Go">
+    ```go
+    // Generic function with type parameter T
+    func GetFirst[T any](slice []T) (T, bool) {
+        var zero T
+        if len(slice) == 0 {
+            return zero, false
+        }
+        return slice[0], true
+    }
+
+    // Usage
+    first, ok := GetFirst([]string{"a", "b", "c"})  // Type inferred
+    firstNum, ok := GetFirst[int]([]int{1, 2, 3})   // Explicit type
+
+    // Generic type
+    type Stack[T any] struct {
+        items []T
+    }
+
+    func (s *Stack[T]) Push(item T) {
+        s.items = append(s.items, item)
+    }
+
+    func (s *Stack[T]) Pop() (T, bool) {
+        var zero T
+        if len(s.items) == 0 {
+            return zero, false
+        }
+        item := s.items[len(s.items)-1]
+        s.items = s.items[:len(s.items)-1]
+        return item, true
+    }
+
+    // Usage
+    stack := Stack[int]{}
+    stack.Push(1)
+    stack.Push(2)
+    value, ok := stack.Pop()  // value = 2, ok = true
+    ```
+  </TabItem>
+  <TabItem value="python" label="Python">
+    ```python
+    from typing import TypeVar, Generic
+
+    T = TypeVar('T')
+
+    def get_first(slice: list[T]) -> tuple[T | None, bool]:
+        if not slice:
+            return None, False
+        return slice[0], True
+
+    # Usage
+    first, ok = get_first(["a", "b", "c"])
+    first_num, ok = get_first([1, 2, 3])
+
+    # Generic class
+    class Stack(Generic[T]):
+        def __init__(self):
+            self.items: list[T] = []
+
+        def push(self, item: T) -> None:
+            self.items.append(item)
+
+        def pop(self) -> tuple[T | None, bool]:
+            if not self.items:
+                return None, False
+            return self.items.pop(), True
+
+    # Usage
+    stack = Stack[int]()
+    stack.push(1)
+    stack.push(2)
+    value, ok = stack.pop()  # value = 2, ok = True
+    ```
+  </TabItem>
+</Tabs>
+
+## Iteration
+
+Go has a `for` loop that can be used to iterate over arrays, slices, maps, and channels.
+
+```go
+for i := 0; i < 100; i++ {
+    // ...
+}
+
+for _, value := range slice {
+    // ...
+}
+
+for key, value := range map {
+    // ...
+}
+```
+
+## Switch Statement
+
+Go has a `switch` statement that can be used to compare a value against a list of constants.
+
+<Tabs>
+  <TabItem value="switch" label="Switch">
+    ```go
+    switch value {
+    case constant1:
+        // ...
+    case constant2:
+        // ...
+    default:
+        // ...
+    }
+    
+    // Switch with multiple values
+    switch day {
+    case "Saturday", "Sunday":
+        fmt.Println("Weekend")
+    case "Monday", "Tuesday", "Wednesday", "Thursday", "Friday":
+        fmt.Println("Weekday")
+    }
+    
+    // Switch without expression (like if-else)
+    switch {
+    case age < 18:
+        fmt.Println("Minor")
+    case age < 65:
+        fmt.Println("Adult")
+    default:
+        fmt.Println("Senior")
+    }
+    ```
+  </TabItem>
+  <TabItem value="ifelse" label="If-Else Equivalent">
+    ```go
+    if value == constant1 {
+        // ...
+    } else if value == constant2 {
+        // ...
+    } else {
+        // ...
+    }
+    
+    // Multiple values
+    if day == "Saturday" || day == "Sunday" {
+        fmt.Println("Weekend")
+    } else if day == "Monday" || day == "Tuesday" || day == "Wednesday" || day == "Thursday" || day == "Friday" {
+        fmt.Println("Weekday")
+    }
+    
+    // Condition-based
+    if age < 18 {
+        fmt.Println("Minor")
+    } else if age < 65 {
+        fmt.Println("Adult")
+    } else {
+        fmt.Println("Senior")
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+## Functions
+
+### Basic Functions
+
+```go
+// Function with parameters and return type
+func greet(name string) string {
+    return fmt.Sprintf("Hello, %s!", name)
+}
+
+// Multiple return values (common pattern)
+func divide(a, b float64) (float64, error) {
+    if b == 0 {
+        return 0, fmt.Errorf("division by zero")
+    }
+    return a / b, nil
+}
+
+// Named return values
+func getCoordinates() (x, y int) {
+    x = 10
+    y = 20
+    return  // Returns x and y
+}
+
+// Variadic functions (variable number of arguments)
+func sum(numbers ...int) int {
+    total := 0
+    for _, num := range numbers {
+        total += num
+    }
+    return total
+}
+
+result := sum(1, 2, 3, 4)  // 10
+```
+
+### Function Types
+
+```go
+// Function type
+type Operation func(int, int) int
+
+func applyOperation(a, b int, op Operation) int {
+    return op(a, b)
+}
+
+// Anonymous function
+add := func(x, y int) int {
+    return x + y
+}
+
+result := applyOperation(5, 3, add)  // 8
+```
+
+### Closures
+
+Closures are functions that capture variables from their enclosing scope.
+
+```go
+func makeCounter() func() int {
+    count := 0
+    return func() int {
+        count++
+        return count
+    }
+}
+
+counter := makeCounter()
+fmt.Println(counter())  // 1
+fmt.Println(counter())  // 2
+```
+
+## Goroutines and Channels
+
+Goroutines are lightweight threads managed by the Go runtime. Use the `go` keyword to run functions concurrently.
+
+Channels are typed, thread-safe conduits for communication between goroutines. They can be unbuffered (synchronous) or buffered (asynchronous up to capacity).
+
+```go
+// Start goroutine with 'go' keyword
+go processData(data)
+
+// Create channels
+ch := make(chan int)        // Unbuffered (synchronous)
+buffered := make(chan int, 5) // Buffered (async up to capacity)
+
+// Send and receive
+ch <- 42          // Send (blocks if unbuffered)
+value := <-ch     // Receive (blocks until data available)
+close(ch)         // Close (sender only!)
+value, ok := <-ch // Check if closed (ok = false when closed)
+
+// Channel directions
+func sender(ch chan<- int) { }   // Send-only
+func receiver(ch <-chan int) { } // Receive-only
+```
+
+### Worker Pool Pattern
+
+Distribute work across multiple goroutines reading from a shared jobs channel. Use `range` to process until the channel closes.
+
+```go
+func worker(id int, jobs <-chan int, results chan<- int) {
+    for job := range jobs {
+        results <- job * 2  // Process and send result
+    }
+}
+
+func main() {
+    jobs := make(chan int, 100)
+    results := make(chan int, 100)
+    
+    // Start 3 workers
+    for i := 1; i <= 3; i++ {
+        go worker(i, jobs, results)
+    }
+    
+    // Send jobs
+    for j := 1; j <= 5; j++ {
+        jobs <- j
+    }
+    close(jobs)
+    
+    // Collect results
+    for r := 1; r <= 5; r++ {
+        fmt.Println(<-results)
+    }
+}
+```
+
+### Select Statement
+
+Select waits on multiple channel operations simultaneously, like a `switch` for channels. Use `default` for non-blocking operations.
+
+```go
+select {
+case msg := <-ch1:
+    fmt.Println("From ch1:", msg)
+case msg := <-ch2:
+    fmt.Println("From ch2:", msg)
+case <-time.After(time.Second):
+    fmt.Println("Timeout")
+default:
+    fmt.Println("No data available")  // Non-blocking
+}
+```
+
+### WaitGroup
+
+WaitGroups synchronize goroutines when you don't need data exchange, just notification of completion.
+
+```go
+import "sync"
+
+var wg sync.WaitGroup
+
+for i := 0; i < 5; i++ {
+    wg.Add(1)
+    go func(id int) {
+        defer wg.Done()
+        // Do work
+    }(i)
+}
+
+wg.Wait()  // Block until all done
+```
+
+**Key rules:** Only sender closes channels. Sending to closed channel panics. Use WaitGroup when you don't need data exchange.
+
+## Defer, Panic, and Recover
+
+```go
+// Defer - executes after function returns
+func readFile() {
+    file, err := os.Open("file.txt")
+    if err != nil {
+        return
+    }
+    defer file.Close()  // Guaranteed to run before return
+    
+    // Work with file...
+}
+
+// Panic and Recover (like exceptions)
+func riskyOperation() {
+    defer func() {
+        if r := recover(); r != nil {
+            fmt.Println("Recovered from:", r)
+        }
+    }()
+    
+    panic("something went wrong")
+}
+```
+
+## Example: HTTP Server
+
+Go has a powerful built-in HTTP server in the standard library:
+
+```go
+package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "log"
+    "net/http"
+)
+
+// Data structures
+type User struct {
+    ID    int    `json:"id"`
+    Name  string `json:"name"`
+    Email string `json:"email"`
+}
+
+type Response struct {
+    Success bool        `json:"success"`
+    Data    any         `json:"data,omitempty"`
+    Error   string      `json:"error,omitempty"`
+}
+
+// Handler functions
+func homeHandler(w http.ResponseWriter, r *http.Request) {
+    fmt.Fprintf(w, "Welcome to the API!")
+}
+
+func getUserHandler(w http.ResponseWriter, r *http.Request) {
+    // Set content type
+    w.Header().Set("Content-Type", "application/json")
+    
+    // Mock user data
+    user := User{
+        ID:    1,
+        Name:  "John Doe",
+        Email: "john@example.com",
+    }
+    
+    response := Response{
+        Success: true,
+        Data:    user,
+    }
+    
+    json.NewEncoder(w).Encode(response)
+}
+
+func createUserHandler(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set("Content-Type", "application/json")
+    
+    // Only accept POST
+    if r.Method != http.MethodPost {
+        w.WriteHeader(http.StatusMethodNotAllowed)
+        json.NewEncoder(w).Encode(Response{
+            Success: false,
+            Error:   "Method not allowed",
+        })
+        return
+    }
+    
+    // Parse JSON body
+    var user User
+    if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+        w.WriteHeader(http.StatusBadRequest)
+        json.NewEncoder(w).Encode(Response{
+            Success: false,
+            Error:   "Invalid JSON",
+        })
+        return
+    }
+    
+    // Process user (mock)
+    user.ID = 123
+    
+    w.WriteHeader(http.StatusCreated)
+    json.NewEncoder(w).Encode(Response{
+        Success: true,
+        Data:    user,
+    })
+}
+
+// Middleware
+func loggingMiddleware(next http.HandlerFunc) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        log.Printf("%s %s", r.Method, r.URL.Path)
+        next(w, r)
+    }
+}
+
+func main() {
+    // Register routes
+    http.HandleFunc("/", loggingMiddleware(homeHandler))
+    http.HandleFunc("/api/user", loggingMiddleware(getUserHandler))
+    http.HandleFunc("/api/users", loggingMiddleware(createUserHandler))
+    
+    // Start server
+    port := ":8080"
+    log.Printf("Server starting on http://localhost%s", port)
+    if err := http.ListenAndServe(port, nil); err != nil {
+        log.Fatal(err)
+    }
+}
+```
+
+## Go vs Python
+
+1. **Compiled Language**: Go compiles to native binaries, no interpreter needed
+2. **Static Typing**: Types are checked at compile time
+3. **Goroutines**: Lightweight concurrency with `go` keyword
+4. **No Classes**: Uses structs and interfaces instead of classes
+5. **Error Handling**: Returns errors as values, no exceptions (except panic/recover)
+6. **Multiple Return Values**: Common pattern for returning results and errors
+7. **Implicit Interface Implementation**: No need to declare that a type implements an interface
+8. **Pointers**: Explicit pointer types (`*Type`) for reference semantics
+9. **Package-Level Visibility**: Uppercase = exported (public), lowercase = unexported (private)

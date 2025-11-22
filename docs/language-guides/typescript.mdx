@@ -13,11 +13,11 @@ See also [JavaScript](/docs/language-guides/javascript).
 
 ## Getting Started
 
-Inside a [JavaScript](/docs/language-guides/javascript) project:
-
 ### Package Management
 
-You often need to install type information as a separate dependency.
+Package management is the same as [JavaScript](/docs/language-guides/javascript#package-management).
+
+Note: You often need to install type information as a separate dependency.
 Use `-D` or `--save-dev` to install it as a dev dependency because it's
 not needed at runtime.
 
@@ -55,17 +55,20 @@ ts-node myfile.ts
 ### Basic Types
 Type annotations use a colon just like Python
 ```typescript
+let age: number = 30;  // All numbers (integers and decimals) use 'number'
+let price: number = 19.99;  // No separate float/double - all are 'number'
+let bigInt: bigint = 123456789012345678901234567890n;  // For very large integers
+
 let name: string = "John";
-let age: number = 30;
 let isActive: boolean = true;
+
 let items: string[] = ["item1", "item2"];
+let tuple: [string, number] = ["id", 123];  // fixed length, defined types
 
-// Tuple type (fixed length, defined types)
-let tuple: [string, number] = ["id", 123];
-
-// Avoid `any` type when possible
-let anyType: any = "anything";
+let anyType: any = "anything";  // avoid `any` type when possible
 ```
+
+**Note on numeric types**: Unlike languages like C, Java, or Go, TypeScript (and JavaScript) only has one numeric type: `number`. All numbers are stored as IEEE 754 double-precision floating-point format, so there's no distinction between integers, floats, or doubles. Use `bigint` for very large integers that exceed the safe integer range.
 
 TypeScript can infer types - no need to always annotate
 ```typescript
@@ -75,7 +78,6 @@ let numbers = [1, 2, 3];  // TypeScript knows this is number[]
 
 ### Enums
 ```typescript
-// Similar to Python enums
 enum Role {
   User = "USER",
   Admin = "ADMIN",
