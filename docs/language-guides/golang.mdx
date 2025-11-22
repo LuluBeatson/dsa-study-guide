@@ -1,13 +1,13 @@
 ---
 sidebar_position: 3
-title: Go (Golang)
+title: Golang
 description: Go quick reference guide
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Go (Golang)
+# Golang
 
 Go is a statically typed, compiled language designed for simplicity and efficiency.
 
@@ -56,9 +56,13 @@ go test ./...
 Go has explicit type declarations:
 
 ```go
-var name string = "John"
 var age int = 30
+var price float64 = 19.99
+var bigInt int64 = 123456789012345678901234567890
+
+var name string = "John"
 var isActive bool = true
+
 var items []string = []string{"item1", "item2"}
 
 // Short variable declaration (type inference)
@@ -73,7 +77,9 @@ var (
 )
 ```
 
-### Constants and Enums
+### Constants
+
+Constants are declared using the `const` keyword. They are immutable and must be assigned a value at declaration time.
 
 ```go
 // Constants
@@ -82,7 +88,15 @@ const (
     StatusActive  = "ACTIVE"
     StatusInactive = "INACTIVE"
 )
+```
 
+### Enums
+
+Go doesn't have built-in enums, but you can create enum-like types using constants. There are two common patterns:
+
+**Integer Enums with `iota`**: The `iota` keyword automatically increments for each constant in a block, starting from 0. This is useful for sequential integer values.
+
+```go
 // Enum-like pattern using iota
 type Role int
 
@@ -92,6 +106,15 @@ const (
     Guest             // 2
 )
 
+// Usage
+fmt.Println(User)  // 0
+fmt.Println(Admin == 1)  // true
+fmt.Println(Guest == Admin)  // false
+```
+
+**String Enums**: Explicitly assign string values to constants. This is useful when you need readable string values or when working with JSON/APIs.
+
+```go
 // String enum pattern
 type Status string
 
@@ -100,9 +123,14 @@ const (
     StatusApproved Status = "APPROVED"
     StatusRejected Status = "REJECTED"
 )
+
+// Usage
+fmt.Println(StatusPending)  // "PENDING"
+fmt.Println(StatusApproved == "APPROVED")  // true
+fmt.Println(StatusRejected == StatusPending)  // false
 ```
 
-### Structs (Similar to Classes)
+### Structs
 
 <Tabs>
   <TabItem value="go" label="Go">
@@ -113,19 +141,7 @@ const (
         Name      string
         Email     string
         IsAdmin   bool
-        createdAt time.Time  // lowercase = private (package-level)
     }
-
-    // Create instances
-    user1 := User{
-        ID:      1,
-        Name:    "John",
-        Email:   "john@example.com",
-        IsAdmin: false,
-    }
-
-    // With positional arguments (discouraged)
-    user2 := User{1, "Jane", "jane@example.com", true, time.Now()}
 
     // Methods on structs (receiver functions)
     func (u User) Greet() string {
@@ -138,32 +154,47 @@ const (
     }
 
     // Usage
+    user1 := User{
+        ID:      1,
+        Name:    "John",
+        Email:   "john@example.com",
+        IsAdmin: false,
+    }
     user1.Greet()     // "Hello, I'm John"
     user1.Promote()   // Modifies user1
+    fmt.Println(user1.IsAdmin)  // true
     ```
   </TabItem>
   <TabItem value="python" label="Python">
     ```python
-    from datetime import datetime
-
     class User:
         def __init__(self, id: int, name: str, email: str, is_admin: bool = False):
             self.id = id
             self.name = name
             self.email = email
             self.is_admin = is_admin
-            self._created_at = datetime.now()  # "private" by convention
+
+
 
         def greet(self) -> str:
             return f"Hello, I'm {self.name}"
 
+
+
         def promote(self) -> None:
             self.is_admin = True
 
+
     # Usage
-    user1 = User(1, "John", "john@example.com", False)
+    user1 = User(
+        id=1,
+        name="John",
+        email="john@example.com",
+        is_admin=False
+    )
     user1.greet()     # "Hello, I'm John"
     user1.promote()   # Modifies user1
+    print(user1.is_admin)  # True
     ```
   </TabItem>
 </Tabs>
