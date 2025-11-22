@@ -58,7 +58,7 @@ Go has explicit type declarations:
 ```go
 var age int = 30
 var price float64 = 19.99
-var bigInt int64 = 123456789012345678901234567890
+var bigInt int64 = 9223372036854775807
 
 var name string = "John"
 var isActive bool = true
@@ -523,7 +523,7 @@ type User struct {
 
 type Response struct {
     Success bool        `json:"success"`
-    Data    interface{} `json:"data,omitempty"`
+    Data    any         `json:"data,omitempty"`
     Error   string      `json:"error,omitempty"`
 }
 
