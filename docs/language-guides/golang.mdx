@@ -472,7 +472,104 @@ fmt.Println(counter())  // 1
 fmt.Println(counter())  // 2
 ```
 
-### Defer, Panic, and Recover
+## Goroutines and Channels
+
+Goroutines are lightweight threads managed by the Go runtime. Use the `go` keyword to run functions concurrently.
+
+Channels are typed, thread-safe conduits for communication between goroutines. They can be unbuffered (synchronous) or buffered (asynchronous up to capacity).
+
+```go
+// Start goroutine with 'go' keyword
+go processData(data)
+
+// Create channels
+ch := make(chan int)        // Unbuffered (synchronous)
+buffered := make(chan int, 5) // Buffered (async up to capacity)
+
+// Send and receive
+ch <- 42          // Send (blocks if unbuffered)
+value := <-ch     // Receive (blocks until data available)
+close(ch)         // Close (sender only!)
+value, ok := <-ch // Check if closed (ok = false when closed)
+
+// Channel directions
+func sender(ch chan<- int) { }   // Send-only
+func receiver(ch <-chan int) { } // Receive-only
+```
+
+### Worker Pool Pattern
+
+Distribute work across multiple goroutines reading from a shared jobs channel. Use `range` to process until the channel closes.
+
+```go
+func worker(id int, jobs <-chan int, results chan<- int) {
+    for job := range jobs {
+        results <- job * 2  // Process and send result
+    }
+}
+
+func main() {
+    jobs := make(chan int, 100)
+    results := make(chan int, 100)
+    
+    // Start 3 workers
+    for i := 1; i <= 3; i++ {
+        go worker(i, jobs, results)
+    }
+    
+    // Send jobs
+    for j := 1; j <= 5; j++ {
+        jobs <- j
+    }
+    close(jobs)
+    
+    // Collect results
+    for r := 1; r <= 5; r++ {
+        fmt.Println(<-results)
+    }
+}
+```
+
+### Select Statement
+
+Select waits on multiple channel operations simultaneously, like a `switch` for channels. Use `default` for non-blocking operations.
+
+```go
+select {
+case msg := <-ch1:
+    fmt.Println("From ch1:", msg)
+case msg := <-ch2:
+    fmt.Println("From ch2:", msg)
+case <-time.After(time.Second):
+    fmt.Println("Timeout")
+default:
+    fmt.Println("No data available")  // Non-blocking
+}
+```
+
+### WaitGroup
+
+WaitGroups synchronize goroutines when you don't need data exchange, just notification of completion.
+
+```go
+import "sync"
+
+var wg sync.WaitGroup
+
+for i := 0; i < 5; i++ {
+    wg.Add(1)
+    go func(id int) {
+        defer wg.Done()
+        // Do work
+    }(i)
+}
+
+wg.Wait()  // Block until all done
+```
+
+**Key rules:** Only sender closes channels. Sending to closed channel panics. Use WaitGroup when you don't need data exchange.
+
+## Defer, Panic, and Recover
 
 ```go
 // Defer - executes after function returns
