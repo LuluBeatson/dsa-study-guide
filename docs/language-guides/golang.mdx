@@ -399,6 +399,88 @@ Generics let you write type-safe, reusable code once that works with multiple ty
   </TabItem>
 </Tabs>
 
+## Iteration
+
+Go has a `for` loop that can be used to iterate over arrays, slices, maps, and channels.
+
+```go
+for i := 0; i < 100; i++ {
+    // ...
+}
+
+for _, value := range slice {
+    // ...
+}
+
+for key, value := range map {
+    // ...
+}
+```
+
+## Switch Statement
+
+Go has a `switch` statement that can be used to compare a value against a list of constants.
+
+<Tabs>
+  <TabItem value="switch" label="Switch">
+    ```go
+    switch value {
+    case constant1:
+        // ...
+    case constant2:
+        // ...
+    default:
+        // ...
+    }
+    
+    // Switch with multiple values
+    switch day {
+    case "Saturday", "Sunday":
+        fmt.Println("Weekend")
+    case "Monday", "Tuesday", "Wednesday", "Thursday", "Friday":
+        fmt.Println("Weekday")
+    }
+    
+    // Switch without expression (like if-else)
+    switch {
+    case age < 18:
+        fmt.Println("Minor")
+    case age < 65:
+        fmt.Println("Adult")
+    default:
+        fmt.Println("Senior")
+    }
+    ```
+  </TabItem>
+  <TabItem value="ifelse" label="If-Else Equivalent">
+    ```go
+    if value == constant1 {
+        // ...
+    } else if value == constant2 {
+        // ...
+    } else {
+        // ...
+    }
+    
+    // Multiple values
+    if day == "Saturday" || day == "Sunday" {
+        fmt.Println("Weekend")
+    } else if day == "Monday" || day == "Tuesday" || day == "Wednesday" || day == "Thursday" || day == "Friday" {
+        fmt.Println("Weekday")
+    }
+    
+    // Condition-based
+    if age < 18 {
+        fmt.Println("Minor")
+    } else if age < 65 {
+        fmt.Println("Adult")
+    } else {
+        fmt.Println("Senior")
+    }
+    ```
+  </TabItem>
+</Tabs>
+
 ## Functions
 
 ### Basic Functions
