@@ -77,6 +77,17 @@ var (
 )
 ```
 
+### Type Aliases
+
+```go
+// Type aliases for clarity
+type UserID int
+type Email string
+
+var id UserID = 123
+var email Email = "user@example.com"
+```
+
 ### Constants
 
 Constants are declared using the `const` keyword. They are immutable and must be assigned a value at declaration time.
@@ -199,30 +210,25 @@ fmt.Println(StatusRejected == StatusPending)  // false
   </TabItem>
 </Tabs>
 
-### Type Aliases
-
-```go
-// Type aliases for clarity
-type UserID int
-type Email string
-
-var id UserID = 123
-var email Email = "user@example.com"
-```
-
 ## Interfaces
 
-Interfaces in Go are implemented implicitly (no `implements` keyword).
+In Python, you typically combine data and behavior in one class. However, in Go, you can separate them:
+- **Structs**: Data
+- **Interfaces**: Behavior contract
+
 
 <Tabs>
   <TabItem value="go" label="Go">
     ```go
+
     // Define an interface
+    // Any type that implements the Greet() method will be a Greeter
     type Greeter interface {
         Greet() string
     }
 
-    // Any type with a Greet() method implements Greeter
+
+    // Person implements Greeter implicitly
     type Person struct {
         Name string
     }
@@ -231,6 +237,7 @@ Interfaces in Go are implemented implicitly (no `implements` keyword).
         return fmt.Sprintf("Hi, I'm %s", p.Name)
     }
 
+    // Robot implements Greeter implicitly
     type Robot struct {
         Model string
     }
@@ -239,7 +246,7 @@ Interfaces in Go are implemented implicitly (no `implements` keyword).
         return fmt.Sprintf("Beep boop. Model: %s", r.Model)
     }
 
-    // Both Person and Robot implement Greeter automatically
+    // A function that uses the Greeter interface
     func SayHello(g Greeter) {
         fmt.Println(g.Greet())
     }
@@ -250,25 +257,19 @@ Interfaces in Go are implemented implicitly (no `implements` keyword).
     
     SayHello(person)  // Works!
     SayHello(robot)   // Also works!
-
-    // Empty interface (like Python's Any)
-    var anything interface{}
-    anything = 42
-    anything = "string"
-    anything = person
     ```
   </TabItem>
   <TabItem value="python" label="Python (ABC)">
     ```python
     from abc import ABC, abstractmethod
 
-    # Define an abstract class (like Go interface)
+    # Define an abstract class
     class Greeter(ABC):
         @abstractmethod
         def greet(self) -> str:
             pass
 
-    # Must explicitly inherit from Greeter
+    # Person implements Greeter explicitly (inheritance)
     class Person(Greeter):
         def __init__(self, name: str):
             self.name = name
@@ -276,6 +277,8 @@ Interfaces in Go are implemented implicitly (no `implements` keyword).
         def greet(self) -> str:
             return f"Hi, I'm {self.name}"
 
+
+    # Robot implements Greeter explicitly (inheritance)
     class Robot(Greeter):
         def __init__(self, model: str):
             self.model = model
@@ -283,8 +286,11 @@ Interfaces in Go are implemented implicitly (no `implements` keyword).
         def greet(self) -> str:
             return f"Beep boop. Model: {self.model}"
 
+
+    # A function that uses the Greeter interface
     def say_hello(g: Greeter) -> None:
         print(g.greet())
+
 
     # Usage
     person = Person("Alice")
@@ -296,8 +302,16 @@ Interfaces in Go are implemented implicitly (no `implements` keyword).
   </TabItem>
 </Tabs>
 
-**Key Difference**: Go interfaces are satisfied implicitly. Python requires explicit inheritance from abstract classes.
+### Empty Interface
 
+Empty interfaces are like an `Any` type.
+
+```go
+var anything interface{}
+anything = 42
+anything = "string"
+anything = person
+```
 ## Generics
 
 Go added generics in Go 1.18:
