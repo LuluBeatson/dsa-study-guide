@@ -302,6 +302,11 @@ In Python, you typically combine data and behavior in one class. However, in Go,
   </TabItem>
 </Tabs>
 
+**Why Use Interfaces?**
+- **Polymorphism**: Ability to use different types in the same way
+- **Dependency Injection**: Passing interfaces instead of concrete types
+- **Testing**: Mocking interfaces for unit tests
+
 ### Empty Interface
 
 Empty interfaces are like an `Any` type.
@@ -314,7 +319,8 @@ anything = person
 ```
 ## Generics
 
-Go added generics in Go 1.18:
+Go added generics in Go 1.18.
+Generics let you write type-safe, reusable code once that works with multiple types.
 
 <Tabs>
   <TabItem value="go" label="Go">
@@ -420,7 +426,7 @@ func getCoordinates() (x, y int) {
     return  // Returns x and y
 }
 
-// Variadic functions
+// Variadic functions (variable number of arguments)
 func sum(numbers ...int) int {
     total := 0
     for _, num := range numbers {
@@ -432,7 +438,7 @@ func sum(numbers ...int) int {
 result := sum(1, 2, 3, 4)  // 10
 ```
 
-### Function Types and Closures
+### Function Types
 
 ```go
 // Function type
@@ -448,8 +454,13 @@ add := func(x, y int) int {
 }
 
 result := applyOperation(5, 3, add)  // 8
+```
 
-// Closures
+### Closures
+
+Closures are functions that capture variables from their enclosing scope.
+
+```go
 func makeCounter() func() int {
     count := 0
     return func() int {
@@ -489,7 +500,7 @@ func riskyOperation() {
 }
 ```
 
-## HTTP Server
+## Example: HTTP Server
 
 Go has a powerful built-in HTTP server in the standard library:
 
