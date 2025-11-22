@@ -75,6 +75,14 @@ var (
     y float64
     z string
 )
+
+// Any type
+var anything any = "anything"
+anything = 42
+anything = person
+
+// Function type
+type Operation func(int, int) int
 ```
 
 ### Type Aliases
@@ -307,16 +315,6 @@ In Python, you typically combine data and behavior in one class. However, in Go,
 - **Dependency Injection**: Passing interfaces instead of concrete types
 - **Testing**: Mocking interfaces for unit tests
 
-### Empty Interface
-
-Empty interfaces are like an `Any` type.
-
-```go
-var anything interface{}
-anything = 42
-anything = "string"
-anything = person
-```
 ## Generics
 
 Go added generics in Go 1.18.
